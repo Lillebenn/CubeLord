@@ -21,6 +21,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 
+	class ACubeLordGameMode* GameModeRef;
+
 	float CurrentYaw{ 0.0f };
 	float TargetYaw{ 0.0f };
 	FVector CamLocation;
@@ -28,6 +30,9 @@ private:
 
 	void RotateCamera();
 	void MoveCamera();
+
+	void ResetLevel();
+	void PauseGame();
 public:
 	// Sets default values for this character's properties
 	AAlbert_Character();

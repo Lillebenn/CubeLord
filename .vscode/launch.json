@@ -1,0 +1,128 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "CubeLord (Debug)",
+			"request": "launch",
+			"preLaunchTask": "CubeLord Win64 Debug Build",
+			"program": "D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\Binaries\\Win64\\UE4-Win64-Debug.exe",
+			"args": [
+			],
+			"cwd": "D:\\EpicGames\\UE_4.26",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\EpicGames\\UE_4.26\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "CubeLord (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "CubeLord Win64 DebugGame Build",
+			"program": "D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\Binaries\\Win64\\UE4-Win64-DebugGame.exe",
+			"args": [
+			],
+			"cwd": "D:\\EpicGames\\UE_4.26",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\EpicGames\\UE_4.26\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "CubeLord (Development)",
+			"request": "launch",
+			"preLaunchTask": "CubeLord Win64 Development Build",
+			"program": "D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\Binaries\\Win64\\UE4.exe",
+			"args": [
+			],
+			"cwd": "D:\\EpicGames\\UE_4.26",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\EpicGames\\UE_4.26\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "CubeLord (Shipping)",
+			"request": "launch",
+			"preLaunchTask": "CubeLord Win64 Shipping Build",
+			"program": "D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\Binaries\\Win64\\UE4-Win64-Shipping.exe",
+			"args": [
+			],
+			"cwd": "D:\\EpicGames\\UE_4.26",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\EpicGames\\UE_4.26\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "CubeLord (Test)",
+			"request": "launch",
+			"preLaunchTask": "CubeLord Win64 Test Build",
+			"program": "D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\Binaries\\Win64\\UE4-Win64-Test.exe",
+			"args": [
+			],
+			"cwd": "D:\\EpicGames\\UE_4.26",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\EpicGames\\UE_4.26\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "CubeLordEditor (Debug)",
+			"request": "launch",
+			"preLaunchTask": "CubeLordEditor Win64 Debug Build",
+			"program": "D:\\EpicGames\\UE_4.26\\Engine\\Binaries\\Win64\\UE4Editor-Win64-Debug.exe",
+			"args": [
+				"D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\CubeLord.uproject"
+			],
+			"cwd": "D:\\EpicGames\\UE_4.26",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\EpicGames\\UE_4.26\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "CubeLordEditor (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "CubeLordEditor Win64 DebugGame Build",
+			"program": "D:\\EpicGames\\UE_4.26\\Engine\\Binaries\\Win64\\UE4Editor-Win64-DebugGame.exe",
+			"args": [
+				"D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\CubeLord.uproject"
+			],
+			"cwd": "D:\\EpicGames\\UE_4.26",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\EpicGames\\UE_4.26\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "CubeLordEditor (Development)",
+			"request": "launch",
+			"preLaunchTask": "CubeLordEditor Win64 Development Build",
+			"program": "D:\\EpicGames\\UE_4.26\\Engine\\Binaries\\Win64\\UE4Editor.exe",
+			"args": [
+				"D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\CubeLord.uproject"
+			],
+			"cwd": "D:\\EpicGames\\UE_4.26",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\EpicGames\\UE_4.26\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "Generate Project Files",
+			"type": "clr",
+			"request": "launch",
+			"program": "D:\\EpicGames\\UE_4.26\\Engine\\Binaries\\DotNET\\UnrealBuildTool.exe",
+			"console": "externalTerminal",
+			"args": [
+				"-projectfiles",
+				"-vscode",
+				"-project=\"D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\CubeLord.uproject\"",
+				"-game",
+				"-engine"
+			],
+			"internalConsoleOptions": "openOnSessionStart",
+			"cwd": "D:\\EpicGames\\UE_4.26"
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "CubeLordEditor Editor Win64 Development (CubeLord)",
+            "intelliSenseMode": "msvc-x64",
+            "compileCommands": "D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\.vscode\\compileCommands_CubeLord.json",
+            "cStandard": "c17",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

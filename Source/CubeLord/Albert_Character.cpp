@@ -9,6 +9,8 @@
 #include "Components/SceneComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "CubeLordGameMode.h"
 
 
 // Sets default values
@@ -45,13 +47,15 @@ AAlbert_Character::AAlbert_Character()
 	//	Kopiert rett fra UE sin default 3rd person character
 	GetCharacterMovement()->bOrientRotationToMovement = true;	//	Character moves in the direction of input...
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 800.0f, 0.0f);	// ... at this rotation rate
+
 }
 
 // Called when the game starts or when spawned
 void AAlbert_Character::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	GameModeRef = Cast<ACubeLordGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 }
 
 // Called every frame
@@ -72,6 +76,10 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAlbert_Character::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
+	// PlayerInputComponent->BindAction("Testing", IE_Pressed, this, &AAlbert_Character::Testing);
+	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
+	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
+	Toggle.bExecuteWhenPaused = true;
 }
 
 void AAlbert_Character::MoveForward(float Value) 
@@ -114,4 +122,15 @@ void AAlbert_Character::RotateCamera()
 void AAlbert_Character::MoveCamera() 
 {
 	CameraRoot->SetRelativeLocation(CamLocation);
+}
+
+void AAlbert_Character::ResetLevel() 
+{
+	
+	GameModeRef->ResetLevel();
+}
+
+void AAlbert_Character::PauseGame() 
+{
+	GameModeRef->PauseGame();
 }

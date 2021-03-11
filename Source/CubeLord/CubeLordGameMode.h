@@ -11,8 +11,16 @@ class ACubeLordGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+private:
+	UWorld* World;
+	bool bGamePaused{ false };
+
+
 public:
 	ACubeLordGameMode();
+
+	void ResetLevel();
+	void PauseGame();
 };
 
 
