@@ -29,6 +29,11 @@ public:
 	// Used to check if the cube has been hit by the player.
 	bool bIsLaunched{ false };
 
+private:
+
+	/* Used to find which direction (X or Y) the cube should travel in when hit*/
+	FVector FindNearestDirection(float Xin, float Yin);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
