@@ -3,6 +3,8 @@
 
 #include "CubePawn.h"
 #include "Math/UnrealMathUtility.h"
+#include "Engine/World.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 // Sets default values
 ACubePawn::ACubePawn()
@@ -113,7 +115,11 @@ void ACubePawn::MoveCube()
 {
 	if (bIsLaunched)
 	{
+		FVector tempVec = CurrentLaunchDirection * BaseLaunchVelocity;
+		float DeltaSeconds = GetWorld()->GetDeltaSeconds();
+		tempVec = tempVec * DeltaSeconds;
 
+		MovementComponent->AddInputVector(tempVec, true);
 	}
 }
 
@@ -121,14 +127,14 @@ void ACubePawn::MoveCube()
 void ACubePawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	InitialLocation = GetActorTransform();
 }
 
 // Called every frame
 void ACubePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	MoveCube();
 }
 
 // Called to bind functionality to input

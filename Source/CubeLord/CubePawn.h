@@ -32,6 +32,8 @@ public:
 
 	FVector CurrentLaunchDirection;
 
+	float BaseLaunchVelocity{ 300 };
+
 	void HitReceived(FVector initLoc);
 
 private:
@@ -40,6 +42,8 @@ private:
 	FVector FindNearestDirection(float Xin, float Yin);
 
 	void MoveCube();
+
+	FTransform InitialLocation;
 
 protected:
 	// Called when the game starts or when spawned
