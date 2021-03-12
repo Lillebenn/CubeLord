@@ -3,6 +3,7 @@
 
 #include "Albert_Character.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
@@ -10,6 +11,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "CubePawn.h"
 #include "CubeLordGameMode.h"
 
 
@@ -38,6 +40,12 @@ AAlbert_Character::AAlbert_Character()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+
+	CubeVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxTrace"));
+	CubeVolume->SetupAttachment(RootComponent);
+	CubeVolume->SetGenerateOverlapEvents(false);
+
+	CubeVolume->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnOverlap);
 
 	//	Don't rotate when the controller rotates. 
 	bUseControllerRotationPitch = false;
@@ -78,6 +86,8 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
 	// PlayerInputComponent->BindAction("Testing", IE_Pressed, this, &AAlbert_Character::Testing);
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AAlbert_Character::StartAttacking);
+	PlayerInputComponent->BindAction("Attack", IE_Released, this, &AAlbert_Character::StopAttacking);
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
 }
@@ -133,4 +143,28 @@ void AAlbert_Character::ResetLevel()
 void AAlbert_Character::PauseGame() 
 {
 	GameModeRef->PauseGame();
+}
+
+void AAlbert_Character::StartAttacking()
+{
+	CubeVolume->SetGenerateOverlapEvents(true);
+	isAttacking = true;
+}
+
+void AAlbert_Character::StopAttacking()
+{
+	CubeVolume->SetGenerateOverlapEvents(false);
+	isAttacking = false;
+}
+
+void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
+
+		if (OtherActor->IsA(ACubePawn::StaticClass()))
+		{
+			// Add cube push function here
+		}
 }
