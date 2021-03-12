@@ -33,7 +33,10 @@ void ACubePawn::HitReceived(FVector initLoc)
 	{
 		tempVec = FindNearestDirection(HitDirection.X, HitDirection.Y);
 	}
+	tempVec.Z = 0;
 	tempVec = tempVec * -1;
+
+	UE_LOG(LogTemp, Warning, TEXT("Direction the cube was launched: %s"), *tempVec.ToString());
 
 	CurrentLaunchDirection = tempVec;
 	bIsLaunched = true;
@@ -50,8 +53,9 @@ FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 	bool Ynegative{ false };
 	FVector tempVec;
 	
-	if (FMath::FloorToInt(tempX) == 0 ||  FMath::FloorToInt(tempY) == 0)
+	if (FMath::FloorToInt(tempX) == 0 && FMath::FloorToInt(tempY) == 0)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Bad direction: %s"), *tempVec.ToString());
 		return tempVec;
 	}
 	
@@ -81,14 +85,14 @@ FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 		{
 			tempVec.X = -1;
 			tempVec.Y = 0;
-
+			tempVec.Z = 0;
 			return tempVec;
 		}
 		else
 		{
 			tempVec.X = 1;
 			tempVec.Y = 0;
-
+			tempVec.Z = 0;
 			return tempVec;
 		}
 	}
@@ -98,14 +102,14 @@ FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 		{
 			tempVec.X = 0;
 			tempVec.Y = -1;
-
+			tempVec.Z = 0;
 			return tempVec;
 		}
 		else
 		{
 			tempVec.X = 0;
 			tempVec.Y = 1;
-
+			tempVec.Z = 0;
 			return tempVec;
 		}
 	}

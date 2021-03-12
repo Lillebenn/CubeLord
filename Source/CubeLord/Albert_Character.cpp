@@ -42,7 +42,7 @@ AAlbert_Character::AAlbert_Character()
 	Camera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 
 	CubeVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxTrace"));
-	CubeVolume->SetupAttachment(RootComponent);
+	CubeVolume->SetupAttachment(GetCapsuleComponent());
 	CubeVolume->SetGenerateOverlapEvents(false);
 
 	CubeVolume->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnOverlap);
@@ -164,9 +164,10 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
-		FVector CurrentLoc = GetActorLocation();
+		
 		if (OtherActor->IsA(ACubePawn::StaticClass()))
 		{
+			FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation();
 			Cast<ACubePawn>(OtherActor)->HitReceived(CurrentLoc);
 		}
 }
