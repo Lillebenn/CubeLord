@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "Engine/StaticMesh.h"
 #include "CubePawn.generated.h"
 
@@ -29,14 +30,22 @@ public:
 	// Used to check if the cube has been hit by the player.
 	bool bIsLaunched{ false };
 
+	FVector CurrentLaunchDirection;
+
+	void HitReceived(FVector initLoc);
+
 private:
 
 	/* Used to find which direction (X or Y) the cube should travel in when hit*/
 	FVector FindNearestDirection(float Xin, float Yin);
 
+	void MoveCube();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFloatingPawnMovement* MovementComponent;
 
 public:	
 	// Called every frame

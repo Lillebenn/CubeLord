@@ -11,13 +11,33 @@ ACubePawn::ACubePawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GridCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("CubeCollision"));
-	GridCollision->SetCollisionProfileName(TEXT("NoCollision"));
+	GridCollision->InitBoxExtent(FVector(50.f));
 	RootComponent = GridCollision;
 
 	CubeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cube"));
 	CubeMesh->SetupAttachment(RootComponent);
+
+	this->MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement Component"));
+	this->MovementComponent->UpdatedComponent = RootComponent;
 }
 
+void ACubePawn::HitReceived(FVector initLoc)
+{
+	FVector tempVec;
+	FVector currLoc = GetActorLocation();
+	FVector HitDirection = initLoc - currLoc;
+	HitDirection.Normalize();
+	if (!bIsLaunched)
+	{
+		tempVec = FindNearestDirection(HitDirection.X, HitDirection.Y);
+	}
+	tempVec = tempVec * -1;
+
+	CurrentLaunchDirection = tempVec;
+	bIsLaunched = true;
+}
+
+// Finds the closest cardinal direction the cube will be launched in.
 FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 {
 	float tempX = Xin;
@@ -86,6 +106,14 @@ FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 
 			return tempVec;
 		}
+	}
+}
+
+void ACubePawn::MoveCube()
+{
+	if (bIsLaunched)
+	{
+
 	}
 }
 

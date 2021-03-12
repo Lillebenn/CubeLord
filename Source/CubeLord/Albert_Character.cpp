@@ -86,8 +86,8 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
 	// PlayerInputComponent->BindAction("Testing", IE_Pressed, this, &AAlbert_Character::Testing);
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AAlbert_Character::StartAttacking);
-	PlayerInputComponent->BindAction("Attack", IE_Released, this, &AAlbert_Character::StopAttacking);
+	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
+	PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
 }
@@ -148,12 +148,14 @@ void AAlbert_Character::PauseGame()
 void AAlbert_Character::StartAttacking()
 {
 	CubeVolume->SetGenerateOverlapEvents(true);
+	UE_LOG(LogTemp, Warning, TEXT("Albert Smash!"));
 	isAttacking = true;
 }
 
 void AAlbert_Character::StopAttacking()
 {
 	CubeVolume->SetGenerateOverlapEvents(false);
+	UE_LOG(LogTemp, Warning, TEXT("No Smash!"));
 	isAttacking = false;
 }
 
@@ -162,9 +164,9 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
-
+		FVector CurrentLoc = GetActorLocation();
 		if (OtherActor->IsA(ACubePawn::StaticClass()))
 		{
-			// Add cube push function here
+			Cast<ACubePawn>(OtherActor)->HitReceived(CurrentLoc);
 		}
 }
