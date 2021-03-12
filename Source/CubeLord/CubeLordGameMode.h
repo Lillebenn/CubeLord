@@ -13,6 +13,8 @@ class ACubeLordGameMode : public AGameModeBase
 
 private:
 	UWorld* World;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool bGamePaused{ false };
 
 
@@ -20,6 +22,8 @@ public:
 	ACubeLordGameMode();
 
 	void ResetLevel();
+
+	UFUNCTION(BlueprintCallable)
 	void PauseGame();
 };
 

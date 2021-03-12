@@ -53,5 +53,25 @@
 		"file": "D:\\\\2PRO101 - Programmering\\\\Semester 2\\\\CubeLord\\\\Source\\\\CubeLord\\\\CubePawn.h",
 		"command": "cl.exe @\"D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\.vscode\\compileCommands_CubeLord\\CubeLord.182.rsp\"",
 		"directory": "D:\\EpicGames\\UE_4.26\\Engine\\Source"
+	},
+	{
+		"file": "D:\\\\2PRO101 - Programmering\\\\Semester 2\\\\CubeLord\\\\Source\\\\CubeLord\\\\PressurePlate.cpp",
+		"command": "cl.exe @\"D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\.vscode\\compileCommands_CubeLord\\CubeLord.182.rsp\"",
+		"directory": "D:\\EpicGames\\UE_4.26\\Engine\\Source"
+	},
+	{
+		"file": "D:\\\\2PRO101 - Programmering\\\\Semester 2\\\\CubeLord\\\\Source\\\\CubeLord\\\\PressurePlate.h",
+		"command": "cl.exe @\"D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\.vscode\\compileCommands_CubeLord\\CubeLord.182.rsp\"",
+		"directory": "D:\\EpicGames\\UE_4.26\\Engine\\Source"
+	},
+	{
+		"file": "D:\\\\2PRO101 - Programmering\\\\Semester 2\\\\CubeLord\\\\Source\\\\CubeLord\\\\Temp_Door.cpp",
+		"command": "cl.exe @\"D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\.vscode\\compileCommands_CubeLord\\CubeLord.182.rsp\"",
+		"directory": "D:\\EpicGames\\UE_4.26\\Engine\\Source"
+	},
+	{
+		"file": "D:\\\\2PRO101 - Programmering\\\\Semester 2\\\\CubeLord\\\\Source\\\\CubeLord\\\\Temp_Door.h",
+		"command": "cl.exe @\"D:\\2PRO101 - Programmering\\Semester 2\\CubeLord\\.vscode\\compileCommands_CubeLord\\CubeLord.182.rsp\"",
+		"directory": "D:\\EpicGames\\UE_4.26\\Engine\\Source"
 	}
 ]
