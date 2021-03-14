@@ -47,6 +47,7 @@ void ACubePawn::HitReceived(FVector initLoc)
 
 	CurrentLaunchDirection = tempVec;
 	bIsLaunched = true;
+	bCubeMoved = true;
 }
 
 // Finds the closest cardinal direction the cube will be launched in.
@@ -126,13 +127,13 @@ void ACubePawn::MoveCube()
 {
 	if (bIsLaunched)
 	{
-		ResetCheckCubeVelocity();
 		FVector tempVec = CurrentLaunchDirection * BaseLaunchVelocity;
 		float DeltaSeconds = GetWorld()->GetDeltaSeconds();
 		tempVec = tempVec * DeltaSeconds;
 
 		MovementComponent->AddInputVector(tempVec, true);
 		MoveCubeDoOnce();
+		
 	}
 	else
 	{
@@ -156,9 +157,9 @@ void ACubePawn::CheckForBoundaryHit()
 
 		if (vecSize <= 0)
 		{
-			  bIsLaunched = false;
 			  AlbertCharacter->SetOverlapTrue();
 			  UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
+			  bIsLaunched = false;
 		}
 		else
 		{
