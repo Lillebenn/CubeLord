@@ -32,6 +32,7 @@ private:
 	FVector CamLocation;
 	FRotator CameraParentRotation;
 	bool isAttacking{ false };
+	bool bCanOverlap{ true };
 
 	void RotateCamera();
 	void MoveCamera();
@@ -57,6 +58,8 @@ public:
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult);
+
+	void SetOverlapTrue();
 
 protected:
 	// Called when the game starts or when spawned

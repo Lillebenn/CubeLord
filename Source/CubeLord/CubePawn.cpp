@@ -5,6 +5,8 @@
 #include "Math/UnrealMathUtility.h"
 #include "Engine/World.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/PrimitiveComponent.h"
 
 // Sets default values
 ACubePawn::ACubePawn()
@@ -21,6 +23,9 @@ ACubePawn::ACubePawn()
 
 	this->MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement Component"));
 	this->MovementComponent->UpdatedComponent = RootComponent;
+
+	bIsLaunched = false;
+	bCheckCubeVelocity = false;
 }
 
 void ACubePawn::HitReceived(FVector initLoc)
@@ -29,9 +34,11 @@ void ACubePawn::HitReceived(FVector initLoc)
 	FVector currLoc = GetActorLocation();
 	FVector HitDirection = initLoc - currLoc;
 	HitDirection.Normalize();
+	UE_LOG(LogTemp, Warning, TEXT("Hitdirection: %s"), *HitDirection.ToString());
 	if (!bIsLaunched)
 	{
 		tempVec = FindNearestDirection(HitDirection.X, HitDirection.Y);
+		UE_LOG(LogTemp, Warning, TEXT("Tempvec after findnearest: %s"), *tempVec.ToString());
 	}
 	tempVec.Z = 0;
 	tempVec = tempVec * -1;
@@ -119,12 +126,84 @@ void ACubePawn::MoveCube()
 {
 	if (bIsLaunched)
 	{
+		ResetCheckCubeVelocity();
 		FVector tempVec = CurrentLaunchDirection * BaseLaunchVelocity;
 		float DeltaSeconds = GetWorld()->GetDeltaSeconds();
 		tempVec = tempVec * DeltaSeconds;
 
 		MovementComponent->AddInputVector(tempVec, true);
+		MoveCubeDoOnce();
 	}
+	else
+	{
+		CheckCubeVelocityDoOnce();
+	}
+}
+
+void ACubePawn::CheckForBoundaryHit()
+{
+	if (bCheckCubeVelocity)
+	{
+		FVector tempVec;
+		float vecSize;
+		tempVec = CubeMesh->GetPhysicsLinearVelocity();
+
+		// UE_LOG(LogTemp, Warning, TEXT("This is the Vector from Cube: %s"), *tempVec.ToString());
+
+		vecSize = tempVec.Size();
+
+		// UE_LOG(LogTemp, Warning, TEXT("vecSize is: %f"), vecSize);
+
+		if (vecSize <= 0)
+		{
+			  bIsLaunched = false;
+			  AlbertCharacter->SetOverlapTrue();
+			  UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
+		}
+		else
+		{
+			// bCubeAboveThresholdSpeed = true;
+		}
+	}
+	
+}
+
+void ACubePawn::MoveCubeDoOnce()
+{
+	if (bCubeMoved)
+	{
+		bCubeMoved = false;
+		GetWorld()->GetTimerManager().SetTimer(CubeDelayTimerHandle, this, &ACubePawn::ResetCheckCubeVelocity, 0.1f, false);
+		return;
+	}
+	else
+	{
+		return;
+	}
+}
+
+void ACubePawn::ResetMoveCubeDoOnce()
+{
+	bCubeMoved = true;
+}
+
+void ACubePawn::CheckCubeVelocityDoOnce()
+{
+	if (bCheckCubeVelocity)
+	{
+		bCheckCubeVelocity = false;
+		ResetMoveCubeDoOnce();
+		return;
+	}
+	else
+	{
+		return;
+	}
+}
+
+void ACubePawn::ResetCheckCubeVelocity()
+{
+	bCheckCubeVelocity = true;
 }
 
 // Called when the game starts or when spawned
@@ -132,6 +211,7 @@ void ACubePawn::BeginPlay()
 {
 	Super::BeginPlay();
 	InitialLocation = GetActorTransform();
+	AlbertCharacter = Cast<AAlbert_Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 // Called every frame
@@ -139,6 +219,7 @@ void ACubePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MoveCube();
+	CheckForBoundaryHit();
 }
 
 // Called to bind functionality to input

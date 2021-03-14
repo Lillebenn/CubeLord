@@ -121,7 +121,12 @@ void AAlbert_Character::MoveRight(float Value)
 }
 
 
-void AAlbert_Character::RotateCamera() 
+void AAlbert_Character::SetOverlapTrue()
+{
+	bCanOverlap = true;
+}
+
+void AAlbert_Character::RotateCamera()
 {
 	FRotator Rotation = CameraRoot->GetComponentRotation();
 	Rotation.Yaw = TargetYaw;
@@ -164,10 +169,14 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
-		
-		if (OtherActor->IsA(ACubePawn::StaticClass()))
+		if (bCanOverlap)
 		{
-			FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation();
-			Cast<ACubePawn>(OtherActor)->HitReceived(CurrentLoc);
+			if (OtherActor->IsA(ACubePawn::StaticClass()))
+			{
+				FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation();
+				Cast<ACubePawn>(OtherActor)->HitReceived(CurrentLoc);
+				bCanOverlap = false;
+			}
 		}
+		
 }

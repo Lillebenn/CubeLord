@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Albert_Character.h"
 #include "GameFramework/Pawn.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -27,8 +28,15 @@ public:
 	// Sets if the cube is magnetic or not.
 	bool bIsMagnetic{ false };
 
-	// Used to check if the cube has been hit by the player.
+	/**True if the cube has been launched in a direction, false otherwise*/
 	bool bIsLaunched{ false };
+
+	bool bCheckCubeVelocity{ false };
+
+	/**True if the Cube has enough speed to kill an enemy on impact, false otherwise*/
+	bool bCubeAboveThresholdSpeed{ false };
+
+	bool bCubeMoved{ false };
 
 	FVector CurrentLaunchDirection;
 
@@ -38,20 +46,40 @@ public:
 
 private:
 
-	/* Used to find which direction (X or Y) the cube should travel in when hit*/
+	/**Used to find which direction (X or Y) the cube should travel in when hit*/
 	FVector FindNearestDirection(float Xin, float Yin);
 
+	/**Moves the cube*/
 	void MoveCube();
 
+	void CheckForBoundaryHit();
+
+	/**Initial spawn of the cube, so it can be reset*/
 	FTransform InitialLocation;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/**Handles the timer between cube launches*/
+	FTimerHandle CubeDelayTimerHandle;
+
+	void MoveCubeDoOnce();
+
+	void ResetMoveCubeDoOnce();
+
+	void CheckCubeVelocityDoOnce();
+	
+	/**Sets bCheckCubeVelocity back to false*/
+	void ResetCheckCubeVelocity();
+
+	/**Component that allows our cubes to move*/
 	UFloatingPawnMovement* MovementComponent;
 
 public:	
+
+	AAlbert_Character* AlbertCharacter;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
