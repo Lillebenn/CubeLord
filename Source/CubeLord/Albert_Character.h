@@ -29,6 +29,7 @@ private:
 
 	float CurrentYaw{ 0.0f };
 	float TargetYaw{ 0.0f };
+	UPROPERTY(EditAnywhere)
 	FVector CamLocation;
 	FRotator CameraParentRotation;
 	bool isAttacking{ false };

@@ -135,7 +135,7 @@ void AAlbert_Character::RotateCamera()
 
 void AAlbert_Character::MoveCamera() 
 {
-	CamLocation = FVector(0.0f, 50.0f, 30.0f);
+	// CamLocation = FVector(0.0f, 50.0f, 30.0f);
 	CameraRoot->SetWorldLocation(CamLocation);
 }
 

@@ -55,7 +55,7 @@ void APressurePlate::Tick(float DeltaTime)
 void APressurePlate::PlateAnimation(float Deltatime) 
 {
 	PlateCurrentZ = FMath::FInterpTo(PlateCurrentZ, PlateZ, Deltatime, 10.0f);
-	FVector PlateLocation;
+	FVector PlateLocation{ 0.0f, 0.0f, 0.0f };
 	PlateLocation.Z = PlateCurrentZ;
 	Plate->SetRelativeLocation(PlateLocation);
 }
