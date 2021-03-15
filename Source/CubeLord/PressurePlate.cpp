@@ -2,9 +2,9 @@
 
 
 #include "PressurePlate.h"
+#include "Temp_Door.h"
 #include "Components/SceneComponent.h"
 #include "Components/BoxComponent.h"
-#include "Temp_Door.h"
 
 // Sets default values
 APressurePlate::APressurePlate()
@@ -22,6 +22,7 @@ APressurePlate::APressurePlate()
 
 	Ground = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ground"));
 	Ground->SetupAttachment(RootComponent);
+
 	Plate = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Plate"));
 	Plate->SetupAttachment(Ground);
 }
@@ -34,11 +35,7 @@ void APressurePlate::BeginPlay()
 	PlayerActor = GetWorld()->GetFirstPlayerController()->GetPawn();
 	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &APressurePlate::OnOverlapBegin);
 	TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &APressurePlate::OnOverlapEnd);
-	if(PlayerActor)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player Here: %s"), *PlayerActor->GetName());
-	}
-
+	
 	if (AffectingActor)
 	{
 		Door = Cast<ATemp_Door>(AffectingActor);
@@ -71,7 +68,7 @@ void APressurePlate::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		if (AffectingActor)
 		{
 			Door->PressurePlateEffectStart();
-			PlateZ = 10.0f;
+			PlateZ = 5.0f;
 		}
 	}
 }
@@ -84,7 +81,7 @@ void APressurePlate::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cla
 		if (AffectingActor)
 		{
 			Door->PressurePlateEffectEnd();
-			PlateZ = 50.0f;
+			PlateZ = 20.0f;
 		}
 	}
 }

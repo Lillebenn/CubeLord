@@ -77,8 +77,8 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAlbert_Character::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
 	// PlayerInputComponent->BindAction("Testing", IE_Pressed, this, &AAlbert_Character::Testing);
-	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
-	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
+	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::CallResetLevel);
+	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::CallPauseGame);
 	Toggle.bExecuteWhenPaused = true;
 }
 
@@ -124,13 +124,14 @@ void AAlbert_Character::MoveCamera()
 	CameraRoot->SetRelativeLocation(CamLocation);
 }
 
-void AAlbert_Character::ResetLevel() 
+void AAlbert_Character::CallResetLevel() 
 {
 	
-	GameModeRef->ResetLevel();
+	GameModeRef->ResetLevelFunc();
 }
 
-void AAlbert_Character::PauseGame() 
+void AAlbert_Character::CallPauseGame() 
 {
-	GameModeRef->PauseGame();
+	GameModeRef->PauseGameFunc();
+
 }

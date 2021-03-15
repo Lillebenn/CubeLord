@@ -23,6 +23,7 @@ private:
 
 	class ACubeLordGameMode* GameModeRef;
 
+
 	float CurrentYaw{ 0.0f };
 	float TargetYaw{ 0.0f };
 	FVector CamLocation;
@@ -31,8 +32,8 @@ private:
 	void RotateCamera();
 	void MoveCamera();
 
-	void ResetLevel();
-	void PauseGame();
+	void CallResetLevel();
+	void CallPauseGame();
 public:
 	// Sets default values for this character's properties
 	AAlbert_Character();

@@ -14,17 +14,27 @@ class ACubeLordGameMode : public AGameModeBase
 private:
 	UWorld* World;
 
+	APlayerController* PC;
+
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool bGamePaused{ false };
 
+protected:
+	UFUNCTION(BlueprintImplementableEvent)
+	void PauseGameMenu(bool GamePause);
 
 public:
 	ACubeLordGameMode();
 
-	void ResetLevel();
+	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
+	void PauseGameFunc();
 
-	UFUNCTION(BlueprintCallable)
-	void PauseGame();
+	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
+	void ResetLevelFunc();
+
+	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
+	void QuitGameFunc();
 };
 
 
