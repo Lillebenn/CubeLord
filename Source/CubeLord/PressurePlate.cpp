@@ -32,7 +32,7 @@ APressurePlate::APressurePlate()
 void APressurePlate::BeginPlay()
 {
 	Super::BeginPlay();
-	PlateCurrentZ = PlateZ;
+	PlateZ = PlateZMax;
 	PlayerActor = GetWorld()->GetFirstPlayerController()->GetPawn();
 	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &APressurePlate::OnOverlapBegin);
 	TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &APressurePlate::OnOverlapEnd);
@@ -69,7 +69,7 @@ void APressurePlate::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		if (AffectingActor)
 		{
 			Door->PressurePlateEffectStart();
-			PlateZ = 5.0f;
+			PlateZ = PlateZMin;
 		}
 	}
 }
@@ -82,7 +82,7 @@ void APressurePlate::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cla
 		if (AffectingActor)
 		{
 			Door->PressurePlateEffectEnd();
-			PlateZ = 20.0f;
+			PlateZ = PlateZMax;
 		}
 	}
 }

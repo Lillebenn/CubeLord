@@ -19,7 +19,13 @@ private:
 
 	void OpenDoor(int32 Counter);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open", meta = (AllowPrivateAccess = "true"));
+	int32 PressurePlatesNeededToOpen;
+
 	int32 DoorCounter{ 0 };
+
+	float DoorYaw{ 0.0f };
+	float CurrentYaw;
 
 public:	
 	// Sets default values for this actor's properties

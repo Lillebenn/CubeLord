@@ -39,18 +39,27 @@ void ATemp_Door::PressurePlateEffectStart()
 
 void ATemp_Door::PressurePlateEffectEnd() 
 {
-	DoorCounter--;
+	if (DoorCounter >= 0)
+	{
+		DoorCounter--;
+	}
 }
 
 
 void ATemp_Door::OpenDoor(int32 Counter) 
 {
-	if(Counter >= 2)
+	if(Counter >= PressurePlatesNeededToOpen)
 	{
-		DoorMesh->SetWorldRotation(FRotator(0.0f, 90.0f, 0.0f));
+		DoorYaw = 0.0f;
 	}
 	else
 	{
-		DoorMesh->SetWorldRotation(FRotator(0.0f, 0.0f, 0.0f));
+		DoorYaw = 90.0f;
 	}
+	
+	CurrentYaw = FMath::FInterpTo(CurrentYaw, DoorYaw, GetWorld()->DeltaTimeSeconds, 5.0f);
+	FRotator DoorRotation = GetActorRotation();
+	DoorRotation.Yaw = CurrentYaw;
+	SetActorRelativeRotation(DoorRotation);
+
 }

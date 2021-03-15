@@ -72,7 +72,7 @@ void AAlbert_Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MoveCamera();
-	RotateCamera();
+	// RotateCamera();
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
 }
@@ -135,7 +135,8 @@ void AAlbert_Character::RotateCamera()
 
 void AAlbert_Character::MoveCamera() 
 {
-	CameraRoot->SetRelativeLocation(CamLocation);
+	CamLocation = FVector(0.0f, 50.0f, 30.0f);
+	CameraRoot->SetWorldLocation(CamLocation);
 }
 
 void AAlbert_Character::ResetLevel() 
