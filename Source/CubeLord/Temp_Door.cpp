@@ -28,16 +28,29 @@ void ATemp_Door::BeginPlay()
 void ATemp_Door::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	OpenDoor(DoorCounter);
+	UE_LOG(LogTemp, Warning, TEXT("%i"), DoorCounter);
 }
 
 void ATemp_Door::PressurePlateEffectStart() 
 {
-	DoorMesh->SetWorldRotation(FRotator(0.0f, 90.0f, 0.0f));
+	DoorCounter++;
 }
 
 void ATemp_Door::PressurePlateEffectEnd() 
 {
-	DoorMesh->SetWorldRotation(FRotator(0.0f, 0.0f, 0.0f));
+	DoorCounter--;
 }
 
+
+void ATemp_Door::OpenDoor(int32 Counter) 
+{
+	if(Counter >= 2)
+	{
+		DoorMesh->SetWorldRotation(FRotator(0.0f, 90.0f, 0.0f));
+	}
+	else
+	{
+		DoorMesh->SetWorldRotation(FRotator(0.0f, 0.0f, 0.0f));
+	}
+}

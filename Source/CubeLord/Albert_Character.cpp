@@ -45,7 +45,6 @@ AAlbert_Character::AAlbert_Character()
 	CubeVolume->SetupAttachment(GetCapsuleComponent());
 	CubeVolume->SetGenerateOverlapEvents(false);
 
-	CubeVolume->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnOverlap);
 
 	//	Don't rotate when the controller rotates. 
 	bUseControllerRotationPitch = false;
@@ -63,6 +62,7 @@ void AAlbert_Character::BeginPlay()
 {
 	Super::BeginPlay();
 	GameModeRef = Cast<ACubeLordGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	CubeVolume->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnOverlap);
 
 }
 
@@ -84,7 +84,6 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAlbert_Character::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
-	// PlayerInputComponent->BindAction("Testing", IE_Pressed, this, &AAlbert_Character::Testing);
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
 	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
 	PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
@@ -142,12 +141,12 @@ void AAlbert_Character::MoveCamera()
 void AAlbert_Character::ResetLevel() 
 {
 	
-	GameModeRef->ResetLevel();
+	GameModeRef->ResetLevelFunc();
 }
 
 void AAlbert_Character::PauseGame() 
 {
-	GameModeRef->PauseGame();
+	GameModeRef->PauseGameFunc();
 }
 
 void AAlbert_Character::StartAttacking()
@@ -168,7 +167,7 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
+	// UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
 		if (bCanOverlap)
 		{
 			if (OtherActor->IsA(ACubePawn::StaticClass()))

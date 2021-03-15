@@ -17,6 +17,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* DoorMesh;
 
+	void OpenDoor(int32 Counter);
+
+	int32 DoorCounter{ 0 };
+
 public:	
 	// Sets default values for this actor's properties
 	ATemp_Door();
