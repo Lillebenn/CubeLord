@@ -64,6 +64,10 @@ void AAlbert_Character::BeginPlay()
 	GameModeRef = Cast<ACubeLordGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	CubeVolume->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnOverlap);
 
+	//	Simple way of setting cameralocation relative to the player start
+	//		NEEDS TO BE CHANGED LATER
+	CamLocation = GetActorLocation() + FVector(200.0f, 0.0f, 0.0f);
+
 }
 
 // Called every frame
@@ -75,6 +79,21 @@ void AAlbert_Character::Tick(float DeltaTime)
 	// RotateCamera();
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
+
+	//	RayTracing to check what is beneath the player
+	FHitResult HitResult = LineTracer();
+
+	AActor* ActorHit = HitResult.GetActor();
+	if (ActorHit)
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("Actor beneath is: %s"), *ActorHit->GetName());
+	}
+	else
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
+	}
+
+
 }
 
 // Called to bind functionality to input
@@ -179,4 +198,21 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 			}
 		}
 		
+}
+
+//	Raycasting to beneath Alberts Capsule Component
+FHitResult AAlbert_Character::LineTracer() 
+{
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams(FName(TEXT("")), false, this);
+
+	GetWorld()->LineTraceSingleByObjectType(
+		Hit,
+		GetMesh()->GetSocketLocation("BoneSocket"),
+		GetMesh()->GetSocketLocation("BoneSocket") - FVector(0.0f, 0.0f, 4.0f),
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_WorldStatic),
+		TraceParams
+	);
+	
+	return Hit;
 }

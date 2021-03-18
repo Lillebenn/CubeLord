@@ -27,9 +27,11 @@ private:
 
 	class ACubeLordGameMode* GameModeRef;
 
+	UPROPERTY(EditAnywhere)
+	AActor* CameraPositionActor{ nullptr };
+
 	float CurrentYaw{ 0.0f };
 	float TargetYaw{ 0.0f };
-	UPROPERTY(EditAnywhere)
 	FVector CamLocation;
 	FRotator CameraParentRotation;
 	bool isAttacking{ false };
@@ -44,6 +46,7 @@ private:
 	void StartAttacking();
 	void StopAttacking();
 
+	FHitResult LineTracer();
 	
 public:
 	// Sets default values for this character's properties

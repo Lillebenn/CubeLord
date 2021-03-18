@@ -29,7 +29,7 @@ void ATemp_Door::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	OpenDoor(DoorCounter);
-	UE_LOG(LogTemp, Warning, TEXT("%i"), DoorCounter);
+	// UE_LOG(LogTemp, Warning, TEXT("%i"), DoorCounter);
 }
 
 void ATemp_Door::PressurePlateEffectStart() 
