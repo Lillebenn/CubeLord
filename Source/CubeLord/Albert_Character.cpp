@@ -81,17 +81,8 @@ void AAlbert_Character::Tick(float DeltaTime)
 	CameraParentRotation = CameraRoot->GetComponentRotation();
 
 	//	RayTracing to check what is beneath the player
-	FHitResult HitResult = LineTracer();
-
-	AActor* ActorHit = HitResult.GetActor();
-	if (ActorHit)
-	{
-		// UE_LOG(LogTemp, Warning, TEXT("Actor beneath is: %s"), *ActorHit->GetName());
-	}
-	else
-	{
-		// UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
-	}
+	RayTraceFromSocket(4.0f, "BoneSocket");
+	
 
 
 }
@@ -201,18 +192,51 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 }
 
 //	Raycasting to beneath Alberts Capsule Component
-FHitResult AAlbert_Character::LineTracer() 
+FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName) 
 {
 	FHitResult Hit;
 	FCollisionQueryParams TraceParams(FName(TEXT("")), false, this);
 
 	GetWorld()->LineTraceSingleByObjectType(
 		Hit,
-		GetMesh()->GetSocketLocation("BoneSocket"),
-		GetMesh()->GetSocketLocation("BoneSocket") - FVector(0.0f, 0.0f, 4.0f),
+		GetMesh()->GetSocketLocation(SocketName),
+		GetMesh()->GetSocketLocation(SocketName) - FVector(0.0f, 0.0f, Range),
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_WorldStatic),
 		TraceParams
 	);
 	
 	return Hit;
+}
+
+void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName) 
+{
+	FHitResult HitResult = RayTracer(Range, SocketName);
+
+	AActor* ActorHit = HitResult.GetActor();
+	if (ActorHit)
+	{
+		if(!bActorHit)
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("Albert On: %s"), *ActorHit->GetName());
+			if (ActorHit->ActorHasTag(TEXT("DIRT")))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
+				PlayEffect();
+			}
+		}
+		bActorHit = true;
+	}
+	else
+	{
+		if(bActorHit)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
+		}
+		bActorHit = false;
+	}
+}
+
+void AAlbert_Character::PlayEffect() 
+{
+	UGameplayStatics::SpawnEmitterAtLocation(this, Particle1, GetMesh()->GetSocketLocation("BoneSocket"));
 }

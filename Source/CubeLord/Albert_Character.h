@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Albert_Character.generated.h"
 
+class USceneComponent;
+class UParticleSystem;
 UCLASS()
 class CUBELORD_API AAlbert_Character : public ACharacter
 {
@@ -13,17 +15,22 @@ class CUBELORD_API AAlbert_Character : public ACharacter
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* Root;
+	USceneComponent* Root;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* CameraRoot;
+	USceneComponent* CameraRoot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* Particle1;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* Particle2;
 
 	/** Overlap volume to check for possible cube targets */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* CubeVolume;
+
 
 	class ACubeLordGameMode* GameModeRef;
 
@@ -37,6 +44,8 @@ private:
 	bool isAttacking{ false };
 	bool bCanOverlap{ true };
 
+	bool bActorHit{ false };
+
 	void RotateCamera();
 	void MoveCamera();
 
@@ -46,7 +55,10 @@ private:
 	void StartAttacking();
 	void StopAttacking();
 
-	FHitResult LineTracer();
+	//	Raytracer to be used anywhere on Albert. Needs a Socket on the skeletal mesh you want to raytrace from
+	FHitResult RayTracer(float Range, FName SocketName);	
+	void RayTraceFromSocket(float Range, FName SocketName);
+	void PlayEffect();
 	
 public:
 	// Sets default values for this character's properties
