@@ -77,7 +77,7 @@ void ACubePawn::AddDownWardForce()
 	if (bHit)
 	{
 		DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
-		if (Hit.Distance > 199)
+		if (Hit.Distance > 56) // 56 is the minimum threshold for this to work.
 		{
 			bIsLaunched = false;
 			MovementComponent->StopMovementImmediately();
@@ -271,6 +271,7 @@ void ACubePawn::BeginPlay()
 void ACubePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	AddDownWardForce();
 	MoveCube();
 	CheckForBoundaryHit();
 }

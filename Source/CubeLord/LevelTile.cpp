@@ -9,12 +9,14 @@ ALevelTile::ALevelTile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	TileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tile"));
-	TileMesh->SetupAttachment(RootComponent);
-
 	AboveGroundCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("AboveGroundCollision"));
 	AboveGroundCollision->InitBoxExtent(FVector(50.f));
 	RootComponent = AboveGroundCollision;
+
+	TileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tile"));
+	TileMesh->SetupAttachment(RootComponent);
+
+	
 
 }
 
