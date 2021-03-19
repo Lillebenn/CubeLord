@@ -58,7 +58,7 @@ private:
 	//	Raytracer to be used anywhere on Albert. Needs a Socket on the skeletal mesh you want to raytrace from
 	FHitResult RayTracer(float Range, FName SocketName);	
 	void RayTraceFromSocket(float Range, FName SocketName);
-	void PlayEffect();
+	void PlayEffect(UParticleSystem* ParticleToPlay);
 	
 public:
 	// Sets default values for this character's properties

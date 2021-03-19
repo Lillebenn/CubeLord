@@ -221,7 +221,12 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 			if (ActorHit->ActorHasTag(TEXT("DIRT")))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
-				PlayEffect();
+				PlayEffect(Particle1);
+			}
+			if (ActorHit->ActorHasTag(TEXT("FLOOR")))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
+				PlayEffect(Particle2);
 			}
 		}
 		bActorHit = true;
@@ -236,7 +241,7 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 	}
 }
 
-void AAlbert_Character::PlayEffect() 
+void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay) 
 {
-	UGameplayStatics::SpawnEmitterAtLocation(this, Particle1, GetMesh()->GetSocketLocation("BoneSocket"));
+	UGameplayStatics::SpawnEmitterAtLocation(this, ParticleToPlay, GetMesh()->GetSocketLocation("BoneSocket"));
 }
