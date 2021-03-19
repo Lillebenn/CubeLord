@@ -40,9 +40,21 @@ public:
 
 	FVector CurrentLaunchDirection;
 
+	void SetLaunchDirectionDown();
+
 	float BaseLaunchVelocity{ 300 };
 
 	void HitReceived(FVector initLoc);
+
+	void AddDownWardForce();
+
+	// Access a timeline in blueprint.
+	UFUNCTION(BlueprintImplementableEvent)
+	void DownwardBoostTimeline();
+
+	// Called on the update of the timeline in blueprint
+	UFUNCTION(BlueprintCallable)
+	void UpdateTimeLine();
 
 private:
 
@@ -63,6 +75,8 @@ protected:
 
 	/**Handles the timer between cube launches*/
 	FTimerHandle CubeDelayTimerHandle;
+
+	FTimerHandle GravityDelayTimerHandle;
 
 	void MoveCubeDoOnce();
 

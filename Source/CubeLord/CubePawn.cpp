@@ -7,6 +7,8 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/PrimitiveComponent.h"
+#include "DrawDebugHelpers.h"
+#include "LevelTile.h"
 
 // Sets default values
 ACubePawn::ACubePawn()
@@ -26,6 +28,12 @@ ACubePawn::ACubePawn()
 
 	bIsLaunched = false;
 	bCheckCubeVelocity = false;
+}
+
+// sets launch direction to be straight down
+void ACubePawn::SetLaunchDirectionDown()
+{
+	CurrentLaunchDirection.Set(0, 0, -1);
 }
 
 void ACubePawn::HitReceived(FVector initLoc)
@@ -48,6 +56,50 @@ void ACubePawn::HitReceived(FVector initLoc)
 	CurrentLaunchDirection = tempVec;
 	bIsLaunched = true;
 	bCubeMoved = true;
+}
+
+// Used to simulate "Roadrunner" gravity
+void ACubePawn::AddDownWardForce()
+{
+	FVector Start = GetActorLocation() + FVector(0, 0, -100);
+	FVector End = GetActorLocation() + FVector(0, 0, -1000);
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+	
+	// Line trace to look for actors below the cube
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+
+	// Visualising the line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	if (bHit)
+	{
+		DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+		if (Hit.Distance > 199)
+		{
+			bIsLaunched = false;
+			MovementComponent->StopMovementImmediately();
+			FVector TargetLoc = Cast<ALevelTile>(HitActor)->GetActorLocation();
+			FVector CurrentLoc = GetActorLocation();
+			FVector NewLoc(TargetLoc.X, TargetLoc.Y, CurrentLoc.Z);
+			SetActorLocation(NewLoc, false);
+			GetWorld()->GetTimerManager().SetTimer(GravityDelayTimerHandle, this, &ACubePawn::SetLaunchDirectionDown, 0.3f, false);
+
+			DownwardBoostTimeline();
+			bIsLaunched = true;
+		}
+	}
+}
+
+void ACubePawn::UpdateTimeLine()
+{
+	FVector tempVec = CurrentLaunchDirection * BaseLaunchVelocity;
+	float DeltaSeconds = GetWorld()->GetDeltaSeconds();
+	tempVec = tempVec * DeltaSeconds;
+
+	MovementComponent->AddInputVector(tempVec, false);
 }
 
 // Finds the closest cardinal direction the cube will be launched in.

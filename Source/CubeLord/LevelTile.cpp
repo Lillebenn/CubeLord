@@ -14,6 +14,7 @@ ALevelTile::ALevelTile()
 
 	AboveGroundCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("AboveGroundCollision"));
 	AboveGroundCollision->InitBoxExtent(FVector(50.f));
+	RootComponent = AboveGroundCollision;
 
 }
 
