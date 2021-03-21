@@ -82,9 +82,6 @@ void AAlbert_Character::Tick(float DeltaTime)
 
 	//	RayTracing to check what is beneath the player
 	RayTraceFromSocket(4.0f, "BoneSocket");
-	
-
-
 }
 
 // Called to bind functionality to input
@@ -208,6 +205,7 @@ FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName)
 	return Hit;
 }
 
+
 void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName) 
 {
 	FHitResult HitResult = RayTracer(Range, SocketName);
@@ -217,7 +215,6 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 	{
 		if(!bActorHit)
 		{
-			// UE_LOG(LogTemp, Warning, TEXT("Albert On: %s"), *ActorHit->GetName());
 			if (ActorHit->ActorHasTag(TEXT("DIRT")))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
