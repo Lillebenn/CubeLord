@@ -13,6 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "CubePawn.h"
 #include "CubeLordGameMode.h"
+#include "Components/AudioComponent.h"
 
 
 // Sets default values
@@ -26,6 +27,11 @@ AAlbert_Character::AAlbert_Character()
 	GetCapsuleComponent()->SetupAttachment(Root);
 	GetCapsuleComponent()->InitCapsuleSize(35.0f, 92.0f);
 	GetCapsuleComponent()->SetWorldLocation(FVector(0.0f, 0.0f, 92.0f));
+
+	Sound1 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound1"));
+	Sound1->SetupAttachment(GetCapsuleComponent());
+	Sound2 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound2"));
+	Sound2->SetupAttachment(GetCapsuleComponent());
 
 	CameraRoot = CreateDefaultSubobject<USceneComponent>(TEXT("CameraRoot"));
 	CameraRoot->SetupAttachment(Root);
@@ -96,6 +102,8 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
+
+	PlayerInputComponent->BindAction("Testing", IE_Pressed, this, &AAlbert_Character::TESTING);
 }
 
 void AAlbert_Character::MoveForward(float Value) 
@@ -213,24 +221,27 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 	AActor* ActorHit = HitResult.GetActor();
 	if (ActorHit)
 	{
-		if(!bActorHit)
+		if (!bActorHit)
 		{
-			if (ActorHit->ActorHasTag(TEXT("DIRT")))
+			if (ActorHit->ActorHasTag(TEXT("Block")))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
-				PlayEffect(Particle1);
-			}
-			if (ActorHit->ActorHasTag(TEXT("FLOOR")))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
+				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
 				PlayEffect(Particle2);
+				Sound2->Play();
+			}
+			// if (ActorHit->ActorHasTag(TEXT("Block")))
+			else
+			{
+				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
+				PlayEffect(Particle1);
+				Sound1->Play();
 			}
 		}
 		bActorHit = true;
 	}
 	else
 	{
-		if(bActorHit)
+		if (bActorHit)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
 		}
@@ -242,3 +253,11 @@ void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay)
 {
 	UGameplayStatics::SpawnEmitterAtLocation(this, ParticleToPlay, GetMesh()->GetSocketLocation("BoneSocket"));
 }
+
+void AAlbert_Character::TESTING() 
+{
+	// GameModeRef->StartGame();
+	GameModeRef->TitleScreen(true);
+	// GameModeRef->GoToTitleScreen(true);
+}
+

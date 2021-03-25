@@ -8,6 +8,7 @@
 
 class USceneComponent;
 class UParticleSystem;
+
 UCLASS()
 class CUBELORD_API AAlbert_Character : public ACharacter
 {
@@ -23,9 +24,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UParticleSystem* Particle1;
+	UParticleSystem* Particle1{ nullptr };
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UParticleSystem* Particle2;
+	UParticleSystem* Particle2{ nullptr };
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* Sound1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* Sound2;
+	
 
 	/** Overlap volume to check for possible cube targets */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
@@ -59,6 +65,8 @@ private:
 	FHitResult RayTracer(float Range, FName SocketName);	
 	void RayTraceFromSocket(float Range, FName SocketName);
 	void PlayEffect(UParticleSystem* ParticleToPlay);
+
+	void TESTING();
 	
 public:
 	// Sets default values for this character's properties
