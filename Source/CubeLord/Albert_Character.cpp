@@ -14,6 +14,7 @@
 #include "CubePawn.h"
 #include "CubeLordGameMode.h"
 #include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 
 
 // Sets default values
@@ -28,10 +29,10 @@ AAlbert_Character::AAlbert_Character()
 	GetCapsuleComponent()->InitCapsuleSize(35.0f, 92.0f);
 	GetCapsuleComponent()->SetWorldLocation(FVector(0.0f, 0.0f, 92.0f));
 
-	Sound1 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound1"));
-	Sound1->SetupAttachment(GetCapsuleComponent());
-	Sound2 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound2"));
-	Sound2->SetupAttachment(GetCapsuleComponent());
+	// Sound1 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound1"));
+	// Sound1->SetupAttachment(GetCapsuleComponent());
+	// Sound2 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound2"));
+	// Sound2->SetupAttachment(GetCapsuleComponent());
 
 	CameraRoot = CreateDefaultSubobject<USceneComponent>(TEXT("CameraRoot"));
 	CameraRoot->SetupAttachment(Root);
@@ -227,14 +228,15 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 			{
 				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
 				PlayEffect(Particle2);
-				Sound2->Play();
+				PlaySound(Sound1, SocketName);
+				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound1, GetMesh()->GetSocketLocation(SocketName));
 			}
-			// if (ActorHit->ActorHasTag(TEXT("Block")))
 			else
 			{
 				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
 				PlayEffect(Particle1);
-				Sound1->Play();
+				PlaySound(Sound2, SocketName);
+				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound2, GetMesh()->GetSocketLocation(SocketName));
 			}
 		}
 		bActorHit = true;
@@ -252,6 +254,11 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay) 
 {
 	UGameplayStatics::SpawnEmitterAtLocation(this, ParticleToPlay, GetMesh()->GetSocketLocation("BoneSocket"));
+}
+
+void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName) 
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName));
 }
 
 void AAlbert_Character::TESTING() 

@@ -8,6 +8,7 @@
 
 class USceneComponent;
 class UParticleSystem;
+class USoundBase;
 
 UCLASS()
 class CUBELORD_API AAlbert_Character : public ACharacter
@@ -27,10 +28,15 @@ private:
 	UParticleSystem* Particle1{ nullptr };
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* Particle2{ nullptr };
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UAudioComponent* Sound1;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UAudioComponent* Sound2;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	// UAudioComponent* Sound1;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	// UAudioComponent* Sound2;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USoundBase* Sound1;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USoundBase* Sound2;
+
 	
 
 	/** Overlap volume to check for possible cube targets */
@@ -65,6 +71,7 @@ private:
 	FHitResult RayTracer(float Range, FName SocketName);	
 	void RayTraceFromSocket(float Range, FName SocketName);
 	void PlayEffect(UParticleSystem* ParticleToPlay);
+	void PlaySound(USoundBase* SoundToPlay, FName SocketName);
 
 	void TESTING();
 	
