@@ -86,15 +86,9 @@ void ACubePawn::AddDownWardForce()
 			FVector NewLoc(TargetLoc.X, TargetLoc.Y, CurrentLoc.Z); 
 			SetActorLocation(NewLoc, false); // Probably a better way to do this.
 			SetLaunchDirectionDown();
-			bIsFalling = true;
 			bIsLaunched = true;
 		}
 	}
-}
-
-void ACubePawn::ResetIsFalling()
-{
-	bIsFalling = false;
 }
 
 // Finds the closest cardinal direction the cube will be launched in.
@@ -201,19 +195,17 @@ void ACubePawn::CheckForBoundaryHit()
 		vecSize = tempVec.Size();
 
 		// UE_LOG(LogTemp, Warning, TEXT("vecSize is: %f"), vecSize);
-		if (bIsFalling == false)
+		if (vecSize <= 0)
 		{
-			if (vecSize <= 0)
-			{
-				AlbertCharacter->SetOverlapTrue();
-				UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
-				bIsLaunched = false;
-			}
-			else
-			{
-				// bCubeAboveThresholdSpeed = true;
-			}
+			AlbertCharacter->SetOverlapTrue();
+			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
+			bIsLaunched = false;
 		}
+		else
+		{
+			// bCubeAboveThresholdSpeed = true;
+		}
+		
 		
 	}
 	

@@ -51,7 +51,6 @@ public:
 
 	void AddDownWardForce();
 
-	void ResetIsFalling();
 
 private:
 
