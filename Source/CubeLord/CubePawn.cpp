@@ -77,29 +77,24 @@ void ACubePawn::AddDownWardForce()
 	if (bHit)
 	{
 		DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
-		if (Hit.Distance > 56) // 56 is the minimum threshold for this to work.
+		if (Hit.Distance > 50) // 56 is the max threshold for this to work atm, above and the block will just keep going. If we change the size of the tiles this need to be redone.
 		{
 			bIsLaunched = false;
 			MovementComponent->StopMovementImmediately();
 			FVector TargetLoc = Cast<ALevelTile>(HitActor)->GetActorLocation();
 			FVector CurrentLoc = GetActorLocation();
-			FVector NewLoc(TargetLoc.X, TargetLoc.Y, CurrentLoc.Z);
-			SetActorLocation(NewLoc, false);
-			GetWorld()->GetTimerManager().SetTimer(GravityDelayTimerHandle, this, &ACubePawn::SetLaunchDirectionDown, 0.3f, false);
-
-			DownwardBoostTimeline();
+			FVector NewLoc(TargetLoc.X, TargetLoc.Y, CurrentLoc.Z); 
+			SetActorLocation(NewLoc, false); // Probably a better way to do this.
+			SetLaunchDirectionDown();
+			bIsFalling = true;
 			bIsLaunched = true;
 		}
 	}
 }
 
-void ACubePawn::UpdateTimeLine()
+void ACubePawn::ResetIsFalling()
 {
-	FVector tempVec = CurrentLaunchDirection * BaseLaunchVelocity;
-	float DeltaSeconds = GetWorld()->GetDeltaSeconds();
-	tempVec = tempVec * DeltaSeconds;
-
-	MovementComponent->AddInputVector(tempVec, false);
+	bIsFalling = false;
 }
 
 // Finds the closest cardinal direction the cube will be launched in.
@@ -206,17 +201,20 @@ void ACubePawn::CheckForBoundaryHit()
 		vecSize = tempVec.Size();
 
 		// UE_LOG(LogTemp, Warning, TEXT("vecSize is: %f"), vecSize);
-
-		if (vecSize <= 0)
+		if (bIsFalling == false)
 		{
-			  AlbertCharacter->SetOverlapTrue();
-			  UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
-			  bIsLaunched = false;
+			if (vecSize <= 0)
+			{
+				AlbertCharacter->SetOverlapTrue();
+				UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
+				bIsLaunched = false;
+			}
+			else
+			{
+				// bCubeAboveThresholdSpeed = true;
+			}
 		}
-		else
-		{
-			// bCubeAboveThresholdSpeed = true;
-		}
+		
 	}
 	
 }

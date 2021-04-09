@@ -38,6 +38,9 @@ public:
 
 	bool bCubeMoved{ false };
 
+	/**True if the cube is falling downwards, false otherwise*/
+	bool bIsFalling{ false };
+
 	FVector CurrentLaunchDirection;
 
 	void SetLaunchDirectionDown();
@@ -48,13 +51,7 @@ public:
 
 	void AddDownWardForce();
 
-	// Access a timeline in blueprint.
-	UFUNCTION(BlueprintImplementableEvent)
-	void DownwardBoostTimeline();
-
-	// Called on the update of the timeline in blueprint
-	UFUNCTION(BlueprintCallable)
-	void UpdateTimeLine();
+	void ResetIsFalling();
 
 private:
 
