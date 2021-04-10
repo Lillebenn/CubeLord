@@ -1,5 +1,13 @@
 # Visual Studio 2015 user specific files
 .vs/
+.vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.ignore
 
 # Compiled Object files
 *.slo

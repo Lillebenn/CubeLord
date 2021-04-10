@@ -6,6 +6,10 @@
 #include "GameFramework/Character.h"
 #include "Albert_Character.generated.h"
 
+class USceneComponent;
+class UParticleSystem;
+class USoundBase;
+
 UCLASS()
 class CUBELORD_API AAlbert_Character : public ACharacter
 {
@@ -13,19 +17,37 @@ class CUBELORD_API AAlbert_Character : public ACharacter
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* Root;
+	USceneComponent* Root;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* CameraRoot;
+	USceneComponent* CameraRoot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* Particle1{ nullptr };
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* Particle2{ nullptr };
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	// UAudioComponent* Sound1;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	// UAudioComponent* Sound2;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USoundBase* Sound1;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USoundBase* Sound2;
+
+	
 
 	/** Overlap volume to check for possible cube targets */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* CubeVolume;
 
+
 	class ACubeLordGameMode* GameModeRef;
+
+	UPROPERTY(EditAnywhere)
+	AActor* CameraPositionActor{ nullptr };
 
 	float CurrentYaw{ 0.0f };
 	float TargetYaw{ 0.0f };
@@ -33,6 +55,8 @@ private:
 	FRotator CameraParentRotation;
 	bool isAttacking{ false };
 	bool bCanOverlap{ true };
+
+	bool bActorHit{ false };
 
 	void RotateCamera();
 	void MoveCamera();
@@ -43,6 +67,13 @@ private:
 	void StartAttacking();
 	void StopAttacking();
 
+	//	Raytracer to be used anywhere on Albert. Needs a Socket on the skeletal mesh you want to raytrace from
+	FHitResult RayTracer(float Range, FName SocketName);	
+	void RayTraceFromSocket(float Range, FName SocketName);
+	void PlayEffect(UParticleSystem* ParticleToPlay);
+	void PlaySound(USoundBase* SoundToPlay, FName SocketName);
+
+	void TESTING();
 	
 public:
 	// Sets default values for this character's properties

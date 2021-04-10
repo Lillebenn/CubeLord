@@ -33,7 +33,10 @@ private:
 	class ATemp_Door* Door{ nullptr };
 
 	UPROPERTY(EditAnywhere)
-	float PlateZ{ 20.0f };
+	float PlateZMax{ 20.0f };
+	UPROPERTY(EditAnywhere)
+	float PlateZMin{ 1.0f };
+	float PlateZ;
 	float PlateCurrentZ{ 0.0f };
 	void PlateAnimation(float Deltatime);
 

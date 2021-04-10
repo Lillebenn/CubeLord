@@ -13,6 +13,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "CubePawn.h"
 #include "CubeLordGameMode.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 
 
 // Sets default values
@@ -26,6 +28,11 @@ AAlbert_Character::AAlbert_Character()
 	GetCapsuleComponent()->SetupAttachment(Root);
 	GetCapsuleComponent()->InitCapsuleSize(35.0f, 92.0f);
 	GetCapsuleComponent()->SetWorldLocation(FVector(0.0f, 0.0f, 92.0f));
+
+	// Sound1 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound1"));
+	// Sound1->SetupAttachment(GetCapsuleComponent());
+	// Sound2 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound2"));
+	// Sound2->SetupAttachment(GetCapsuleComponent());
 
 	CameraRoot = CreateDefaultSubobject<USceneComponent>(TEXT("CameraRoot"));
 	CameraRoot->SetupAttachment(Root);
@@ -64,6 +71,10 @@ void AAlbert_Character::BeginPlay()
 	GameModeRef = Cast<ACubeLordGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	CubeVolume->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnOverlap);
 
+	//	Simple way of setting cameralocation relative to the player start
+	//		NEEDS TO BE CHANGED LATER
+	CamLocation = GetActorLocation() + FVector(200.0f, 0.0f, 0.0f);
+
 }
 
 // Called every frame
@@ -72,9 +83,12 @@ void AAlbert_Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MoveCamera();
-	RotateCamera();
+	// RotateCamera();
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
+
+	//	RayTracing to check what is beneath the player
+	RayTraceFromSocket(4.0f, "BoneSocket");
 }
 
 // Called to bind functionality to input
@@ -89,6 +103,8 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
+
+	PlayerInputComponent->BindAction("Testing", IE_Pressed, this, &AAlbert_Character::TESTING);
 }
 
 void AAlbert_Character::MoveForward(float Value) 
@@ -135,7 +151,8 @@ void AAlbert_Character::RotateCamera()
 
 void AAlbert_Character::MoveCamera() 
 {
-	CameraRoot->SetRelativeLocation(CamLocation);
+	// CamLocation = FVector(0.0f, 50.0f, 30.0f);
+	CameraRoot->SetWorldLocation(CamLocation);
 }
 
 void AAlbert_Character::ResetLevel() 
@@ -179,3 +196,75 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		}
 		
 }
+
+//	Raycasting to beneath Alberts Capsule Component
+FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName) 
+{
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams(FName(TEXT("")), false, this);
+
+	GetWorld()->LineTraceSingleByObjectType(
+		Hit,
+		GetMesh()->GetSocketLocation(SocketName),
+		GetMesh()->GetSocketLocation(SocketName) - FVector(0.0f, 0.0f, Range),
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_WorldStatic),
+		TraceParams
+	);
+	
+	return Hit;
+}
+
+
+void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName) 
+{
+	FHitResult HitResult = RayTracer(Range, SocketName);
+
+	AActor* ActorHit = HitResult.GetActor();
+	if (ActorHit)
+	{
+		if (!bActorHit)
+		{
+			if (ActorHit->ActorHasTag(TEXT("Block")))
+			{
+				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
+				PlayEffect(Particle2);
+				PlaySound(Sound1, SocketName);
+				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound1, GetMesh()->GetSocketLocation(SocketName));
+			}
+			else
+			{
+				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
+				PlayEffect(Particle1);
+				PlaySound(Sound2, SocketName);
+				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound2, GetMesh()->GetSocketLocation(SocketName));
+			}
+		}
+		bActorHit = true;
+	}
+	else
+	{
+		if (bActorHit)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
+		}
+		bActorHit = false;
+	}
+}
+
+void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay) 
+{
+	UGameplayStatics::SpawnEmitterAtLocation(this, ParticleToPlay, GetMesh()->GetSocketLocation("BoneSocket"));
+}
+
+void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName) 
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName));
+}
+
+void AAlbert_Character::TESTING() 
+{
+	// GameModeRef->StartGame();
+	GameModeRef->TitleScreen(true);
+	// GameModeRef->GoToTitleScreen(true);
+}
+

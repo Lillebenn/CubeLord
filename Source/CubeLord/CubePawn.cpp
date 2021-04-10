@@ -7,6 +7,8 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/PrimitiveComponent.h"
+#include "DrawDebugHelpers.h"
+#include "LevelTile.h"
 
 // Sets default values
 ACubePawn::ACubePawn()
@@ -26,6 +28,12 @@ ACubePawn::ACubePawn()
 
 	bIsLaunched = false;
 	bCheckCubeVelocity = false;
+}
+
+// sets launch direction to be straight down
+void ACubePawn::SetLaunchDirectionDown()
+{
+	CurrentLaunchDirection.Set(0, 0, -1);
 }
 
 void ACubePawn::HitReceived(FVector initLoc)
@@ -48,6 +56,39 @@ void ACubePawn::HitReceived(FVector initLoc)
 	CurrentLaunchDirection = tempVec;
 	bIsLaunched = true;
 	bCubeMoved = true;
+}
+
+// Used to simulate "Roadrunner" gravity
+void ACubePawn::AddDownWardForce()
+{
+	FVector Start = GetActorLocation() + FVector(0, 0, -100);
+	FVector End = GetActorLocation() + FVector(0, 0, -1000);
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+	
+	// Line trace to look for actors below the cube
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+
+	// Visualising the line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	if (bHit)
+	{
+		DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+		if (Hit.Distance > 50) // 56 is the max threshold for this to work atm, above and the block will just keep going. If we change the size of the tiles this need to be redone.
+		{
+			bIsLaunched = false;
+			MovementComponent->StopMovementImmediately();
+			FVector TargetLoc = Cast<ALevelTile>(HitActor)->GetActorLocation();
+			FVector CurrentLoc = GetActorLocation();
+			FVector NewLoc(TargetLoc.X, TargetLoc.Y, CurrentLoc.Z); 
+			SetActorLocation(NewLoc, false); // Probably a better way to do this.
+			SetLaunchDirectionDown();
+			bIsLaunched = true;
+		}
+	}
 }
 
 // Finds the closest cardinal direction the cube will be launched in.
@@ -154,17 +195,18 @@ void ACubePawn::CheckForBoundaryHit()
 		vecSize = tempVec.Size();
 
 		// UE_LOG(LogTemp, Warning, TEXT("vecSize is: %f"), vecSize);
-
 		if (vecSize <= 0)
 		{
-			  AlbertCharacter->SetOverlapTrue();
-			  UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
-			  bIsLaunched = false;
+			AlbertCharacter->SetOverlapTrue();
+			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
+			bIsLaunched = false;
 		}
 		else
 		{
 			// bCubeAboveThresholdSpeed = true;
 		}
+		
+		
 	}
 	
 }
@@ -219,6 +261,7 @@ void ACubePawn::BeginPlay()
 void ACubePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	AddDownWardForce();
 	MoveCube();
 	CheckForBoundaryHit();
 }
