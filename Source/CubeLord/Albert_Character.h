@@ -28,10 +28,6 @@ private:
 	UParticleSystem* Particle1{ nullptr };
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* Particle2{ nullptr };
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	// UAudioComponent* Sound1;
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	// UAudioComponent* Sound2;
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USoundBase* Sound1;
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
@@ -81,7 +77,13 @@ private:
 	void PlaySound(USoundBase* SoundToPlay, FName SocketName);
 
 	void TESTING();
+	class AArmorPawn* Armor;
+	UPROPERTY(EditAnywhere)
+	AActor* ArmorActor;
 	
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bDeath{ false };
+
 public:
 	// Sets default values for this character's properties
 	AAlbert_Character();
@@ -100,6 +102,8 @@ public:
 
 	void SetOverlapTrue();
 
+	void Death();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -107,4 +111,6 @@ protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void CallDeath();
 };
