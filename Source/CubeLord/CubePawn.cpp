@@ -218,15 +218,8 @@ void ACubePawn::CheckForBoundaryHit()
 			AlbertCharacter->SetOverlapTrue();
 			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
 			bIsLaunched = false;
-		}
-		else
-		{
-			// bCubeAboveThresholdSpeed = true;
-		}
-		
-		
-	}
-	
+		}	
+	}	
 }
 
 void ACubePawn::MoveCubeDoOnce()
