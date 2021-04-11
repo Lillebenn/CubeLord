@@ -26,7 +26,16 @@ public:
 	ACubePawn();
 
 	/**True if the cube is magnetic and can be pulled thowards the player, false otherwise*/
+	UPROPERTY(Category = Cube, EditAnywhere)
 	bool bIsMagnetic{ false };
+
+	/**Material that the cube uses if it is magnetic*/
+	UPROPERTY(EditAnywhere)
+	class UMaterial* MagneticMaterial;
+
+	/**Material that the cube uses if it is NOT magnetic*/
+	UPROPERTY(EditAnywhere)
+	class UMaterial* NonMagneticMaterial;
 
 	/**True if the cube is moving, false otherwise*/
 	bool bIsLaunched{ false };
