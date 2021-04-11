@@ -15,7 +15,9 @@
 #include "CubeLordGameMode.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundBase.h"
+#include "DrawDebugHelpers.h"
 
+#define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
 
 // Sets default values
 AAlbert_Character::AAlbert_Character()
@@ -101,6 +103,7 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
 	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
 	PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
+	PlayerInputComponent->BindAction("MagnetPull", IE_Pressed, this, &AAlbert_Character::MagneticPull);
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
 
@@ -178,6 +181,30 @@ void AAlbert_Character::StopAttacking()
 	CubeVolume->SetGenerateOverlapEvents(false);
 	UE_LOG(LogTemp, Warning, TEXT("No Smash!"));
 	isAttacking = false;
+}
+
+void AAlbert_Character::MagneticPull()
+{
+	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0,0,-50);
+	FVector End = Start + GetMesh()->GetForwardVector() * 2000;
+	
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	// Line trace to look for magnetic cubes.
+	bool bHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, COLLISION_MAGNETICCUBE, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+	
+	// Visualising the line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	if (bHit)
+	{		
+			DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
+			FVector MagnetLoc = GetMesh()->GetComponentLocation();
+			Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+	}
 }
 
 void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

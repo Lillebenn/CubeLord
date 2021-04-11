@@ -68,6 +68,9 @@ private:
 	void StartAttacking();
 	void StopAttacking();
 
+	// Function that pulls a magnetic cube thowards the player.
+	void MagneticPull();
+
 	//	Raytracer to be used anywhere on Albert. Needs a Socket on the skeletal mesh you want to raytrace from
 	FHitResult RayTracer(float Range, FName SocketName);	
 	void RayTraceFromSocket(float Range, FName SocketName);

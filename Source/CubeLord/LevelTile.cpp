@@ -5,7 +5,7 @@
 #include "Albert_Character.h"
 #include "Components/PrimitiveComponent.h"
 
-#define COLLISION_CUBE ECC_GameTraceChannel2
+#define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
 
 // Sets default values
 ALevelTile::ALevelTile()
@@ -30,7 +30,8 @@ void ALevelTile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Block Cube!"));
-		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_CUBE, ECR_Block);
+		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_MAGNETICCUBE, ECR_Block);
+		AboveGroundCollision->SetVisibility(true);
 	}
 }
 
@@ -40,7 +41,8 @@ void ALevelTile::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Block Cube!"));
-		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_CUBE, ECR_Overlap);
+		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_MAGNETICCUBE, ECR_Overlap);
+		AboveGroundCollision->SetVisibility(false);
 	}
 }
 

@@ -67,7 +67,6 @@ public:
 	/**Pulls the cube down when it's above a hole*/
 	void AddDownWardForce();
 
-
 private:
 	
 	/**Used to find which direction (X or Y) the cube should travel in when hit*/

@@ -10,6 +10,8 @@
 #include "DrawDebugHelpers.h"
 #include "LevelTile.h"
 
+#define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
+
 // Sets default values
 ACubePawn::ACubePawn()
 {
@@ -52,8 +54,11 @@ void ACubePawn::HitReceived(FVector initLoc)
 		UE_LOG(LogTemp, Warning, TEXT("Tempvec after findnearest: %s"), *tempVec.ToString());
 	}
 	tempVec.Z = 0;
+	if (!bIsMagnetic)
+	{
 	tempVec = tempVec * -1;
-
+	}
+	
 	UE_LOG(LogTemp, Warning, TEXT("Direction the cube was launched: %s"), *tempVec.ToString());
 
 	CurrentLaunchDirection = tempVec;
@@ -260,6 +265,7 @@ void ACubePawn::BeginPlay()
 	if (bIsMagnetic)
 	{
 		CubeMesh->SetMaterial(0, MagneticMaterial);
+		CubeMesh->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
 	}
 	else
 	{
