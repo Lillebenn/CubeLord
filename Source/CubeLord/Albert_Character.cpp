@@ -144,6 +144,12 @@ void AAlbert_Character::SetOverlapTrue()
 	bCanOverlap = true;
 }
 
+void AAlbert_Character::Death()
+{
+	bDeath = true;
+	CallDeath();
+}
+
 void AAlbert_Character::RotateCamera()
 {
 	FRotator Rotation = CameraRoot->GetComponentRotation();
