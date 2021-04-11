@@ -64,9 +64,12 @@ private:
 	void ResetLevel();
 	void PauseGame();
 
-	// functions for simulating attacks - TODO replace when hammer animation is in.
+	// OLD
 	void StartAttacking();
 	void StopAttacking();
+
+	// Function that pushes a block away from the player.
+	void HammerSwing();
 
 	// Function that pulls a magnetic cube thowards the player.
 	void MagneticPull();
@@ -89,6 +92,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
+	// OLD
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,

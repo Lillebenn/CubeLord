@@ -101,8 +101,8 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAlbert_Character::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
-	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
-	PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
+	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::HammerSwing);
+	//PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
 	PlayerInputComponent->BindAction("MagnetPull", IE_Pressed, this, &AAlbert_Character::MagneticPull);
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
@@ -169,6 +169,7 @@ void AAlbert_Character::PauseGame()
 	GameModeRef->PauseGameFunc();
 }
 
+// Old Attack
 void AAlbert_Character::StartAttacking()
 {
 	CubeVolume->SetGenerateOverlapEvents(true);
@@ -176,11 +177,36 @@ void AAlbert_Character::StartAttacking()
 	isAttacking = true;
 }
 
+// Old Attack
 void AAlbert_Character::StopAttacking()
 {
 	CubeVolume->SetGenerateOverlapEvents(false);
 	UE_LOG(LogTemp, Warning, TEXT("No Smash!"));
 	isAttacking = false;
+}
+
+void AAlbert_Character::HammerSwing()
+{
+	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -50);
+	FVector End = Start + GetMesh()->GetForwardVector() * 100;
+
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	// Line trace to look for magnetic cubes.
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+
+	// Visualising the line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	if (bHit)
+	{
+		DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+		FVector CurrentLoc = GetMesh()->GetComponentLocation();
+		Cast<ACubePawn>(HitActor)->HitReceived(CurrentLoc);
+	}
 }
 
 void AAlbert_Character::MagneticPull()
@@ -207,6 +233,7 @@ void AAlbert_Character::MagneticPull()
 	}
 }
 
+// Old Attack
 void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
@@ -221,7 +248,6 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				bCanOverlap = false;
 			}
 		}
-		
 }
 
 //	Raycasting to beneath Alberts Capsule Component
