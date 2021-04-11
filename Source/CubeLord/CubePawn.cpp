@@ -10,6 +10,8 @@
 #include "DrawDebugHelpers.h"
 #include "LevelTile.h"
 
+#define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
+
 // Sets default values
 ACubePawn::ACubePawn()
 {
@@ -25,6 +27,9 @@ ACubePawn::ACubePawn()
 
 	this->MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement Component"));
 	this->MovementComponent->UpdatedComponent = RootComponent;
+
+	MagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("MagneticMaterial"));
+	NonMagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NonMagneticMaterial"));
 
 	bIsLaunched = false;
 	bCheckCubeVelocity = false;
@@ -49,8 +54,11 @@ void ACubePawn::HitReceived(FVector initLoc)
 		UE_LOG(LogTemp, Warning, TEXT("Tempvec after findnearest: %s"), *tempVec.ToString());
 	}
 	tempVec.Z = 0;
+	if (!bIsMagnetic)
+	{
 	tempVec = tempVec * -1;
-
+	}
+	
 	UE_LOG(LogTemp, Warning, TEXT("Direction the cube was launched: %s"), *tempVec.ToString());
 
 	CurrentLaunchDirection = tempVec;
@@ -58,7 +66,6 @@ void ACubePawn::HitReceived(FVector initLoc)
 	bCubeMoved = true;
 }
 
-// Used to simulate "Roadrunner" gravity
 void ACubePawn::AddDownWardForce()
 {
 	FVector Start = GetActorLocation() + FVector(0, 0, -100);
@@ -89,6 +96,17 @@ void ACubePawn::AddDownWardForce()
 			bIsLaunched = true;
 		}
 	}
+}
+
+ECollisionChannel ACubePawn::GetCollisionChannel(AActor* cube)
+{
+	ECollisionChannel temp = CubeMesh->UPrimitiveComponent::GetCollisionObjectType();
+	return temp;
+}
+
+bool ACubePawn::GetIsMagnetic()
+{
+	return bIsMagnetic;
 }
 
 // Finds the closest cardinal direction the cube will be launched in.
@@ -255,6 +273,15 @@ void ACubePawn::BeginPlay()
 	Super::BeginPlay();
 	InitialLocation = GetActorTransform();
 	AlbertCharacter = Cast<AAlbert_Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (bIsMagnetic)
+	{
+		CubeMesh->SetMaterial(0, MagneticMaterial);
+		CubeMesh->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
+	}
+	else
+	{
+		CubeMesh->SetMaterial(0, NonMagneticMaterial);
+	}
 }
 
 // Called every frame
