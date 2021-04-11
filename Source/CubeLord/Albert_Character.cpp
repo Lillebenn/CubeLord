@@ -203,9 +203,19 @@ void AAlbert_Character::HammerSwing()
 	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
 	if (bHit)
 	{
-		DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
-		FVector CurrentLoc = GetMesh()->GetComponentLocation();
-		Cast<ACubePawn>(HitActor)->HitReceived(CurrentLoc);
+		if(Cast<ACubePawn>(HitActor)->GetIsMagnetic() == true)
+		{
+			DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+			FVector CurrentLoc = GetMesh()->GetComponentLocation();
+			FVector EndLoc = CurrentLoc + GetMesh()->GetForwardVector() * 200;
+			Cast<ACubePawn>(HitActor)->HitReceived(EndLoc);
+		}
+		else
+		{
+			DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+			FVector CurrentLoc = GetMesh()->GetComponentLocation();
+			Cast<ACubePawn>(HitActor)->HitReceived(CurrentLoc);
+		}
 	}
 }
 

@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Engine/StaticMesh.h"
+#include "Components/PrimitiveComponent.h"
 #include "CubePawn.generated.h"
 
 UCLASS()
@@ -66,6 +67,11 @@ public:
 
 	/**Pulls the cube down when it's above a hole*/
 	void AddDownWardForce();
+
+	/**Returns the cubes collision channel*/
+	ECollisionChannel GetCollisionChannel(AActor* cube);
+
+	bool GetIsMagnetic();
 
 private:
 	

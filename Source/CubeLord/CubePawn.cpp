@@ -98,6 +98,17 @@ void ACubePawn::AddDownWardForce()
 	}
 }
 
+ECollisionChannel ACubePawn::GetCollisionChannel(AActor* cube)
+{
+	ECollisionChannel temp = CubeMesh->UPrimitiveComponent::GetCollisionObjectType();
+	return temp;
+}
+
+bool ACubePawn::GetIsMagnetic()
+{
+	return bIsMagnetic;
+}
+
 // Finds the closest cardinal direction the cube will be launched in.
 FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 {
