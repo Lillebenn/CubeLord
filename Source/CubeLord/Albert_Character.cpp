@@ -102,8 +102,9 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
 	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::HammerSwing);
-	//PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
+	// PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
 	PlayerInputComponent->BindAction("MagnetPull", IE_Pressed, this, &AAlbert_Character::MagneticPull);
+	// PlayerInputComponent->BindAction("MagnetPull", IE_Released, this, &AAlbert_Character::StopPulling);
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
 
@@ -177,18 +178,25 @@ void AAlbert_Character::StartAttacking()
 	isAttacking = true;
 }
 
-// Old Attack
+// Stop Attacking
 void AAlbert_Character::StopAttacking()
 {
-	CubeVolume->SetGenerateOverlapEvents(false);
-	UE_LOG(LogTemp, Warning, TEXT("No Smash!"));
 	isAttacking = false;
+}
+
+// Stop Pulling
+void AAlbert_Character::StopPulling()
+{
+	isPulling = false;
 }
 
 void AAlbert_Character::HammerSwing()
 {
+	if (!isAttacking)
+	{
+	isAttacking = true;
 	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -50);
-	FVector End = Start + GetMesh()->GetForwardVector() * 100;
+	FVector End = Start + GetMesh()->GetForwardVector() * 150;
 
 	FHitResult Hit;
 	FCollisionQueryParams TraceParams;
@@ -201,26 +209,31 @@ void AAlbert_Character::HammerSwing()
 
 	// Visualising the line
 	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
-	if (bHit)
-	{
-		if(Cast<ACubePawn>(HitActor)->GetIsMagnetic() == true)
+		if (bHit)
 		{
-			DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
-			FVector CurrentLoc = GetMesh()->GetComponentLocation();
-			FVector EndLoc = CurrentLoc + GetMesh()->GetForwardVector() * 200;
-			Cast<ACubePawn>(HitActor)->HitReceived(EndLoc);
-		}
-		else
-		{
-			DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
-			FVector CurrentLoc = GetMesh()->GetComponentLocation();
-			Cast<ACubePawn>(HitActor)->HitReceived(CurrentLoc);
+			if(Cast<ACubePawn>(HitActor)->GetIsMagnetic() == true)
+			{
+				DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+				FVector CurrentLoc = GetMesh()->GetComponentLocation();
+				FVector EndLoc = CurrentLoc + GetMesh()->GetForwardVector() * 200;
+				Cast<ACubePawn>(HitActor)->HitReceived(EndLoc);
+			}
+			else
+			{
+				DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+				FVector CurrentLoc = GetMesh()->GetComponentLocation();
+				Cast<ACubePawn>(HitActor)->HitReceived(CurrentLoc);
+			}
 		}
 	}
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopAttacking, 1.f, false);
 }
 
 void AAlbert_Character::MagneticPull()
 {
+	if(!isPulling)
+	{
+	isPulling = true;
 	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0,0,-50);
 	FVector End = Start + GetMesh()->GetForwardVector() * 2000;
 	
@@ -235,12 +248,14 @@ void AAlbert_Character::MagneticPull()
 	
 	// Visualising the line
 	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
-	if (bHit)
-	{		
-			DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
-			FVector MagnetLoc = GetMesh()->GetComponentLocation();
-			Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+		if (bHit)
+		{		
+				DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
+				FVector MagnetLoc = GetMesh()->GetComponentLocation();
+				Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+		}
 	}
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
 }
 
 // Old Attack

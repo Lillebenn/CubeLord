@@ -54,6 +54,7 @@ private:
 	FVector CamLocation;
 	FRotator CameraParentRotation;
 	bool isAttacking{ false };
+	bool isPulling{ false };
 	bool bCanOverlap{ true };
 
 	bool bActorHit{ false };
@@ -67,6 +68,8 @@ private:
 	// OLD
 	void StartAttacking();
 	void StopAttacking();
+
+	void StopPulling();
 
 	// Function that pushes a block away from the player.
 	void HammerSwing();
@@ -101,6 +104,10 @@ public:
 	void SetOverlapTrue();
 
 protected:
+
+	/**Handles the timer between cube launches*/
+	FTimerHandle CooldownTimerHandle;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
