@@ -23,6 +23,17 @@ public:
 	// Sets default values for this actor's properties
 	ALevelTile();
 
+	/**If AboveGroundCollision is overlapping with the main character it sets the collision channel to block cubes so they cant hit the player*/
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult& SweepResult);
+
+	/**Resets the collision channel so cubes can once again enter the collider if they player isn't standing in it*/
+	UFUNCTION()
+		void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+			UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

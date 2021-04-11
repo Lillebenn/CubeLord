@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Engine/StaticMesh.h"
+#include "Components/PrimitiveComponent.h"
 #include "CubePawn.generated.h"
 
 UCLASS()
@@ -25,41 +26,62 @@ public:
 	// Sets default values for this pawn's properties
 	ACubePawn();
 
-	// Sets if the cube is magnetic or not.
+	/**True if the cube is magnetic and can be pulled thowards the player, false otherwise*/
+	UPROPERTY(Category = Cube, EditAnywhere)
 	bool bIsMagnetic{ false };
 
-	/**True if the cube has been launched in a direction, false otherwise*/
+	/**Material that the cube uses if it is magnetic*/
+	UPROPERTY(EditAnywhere)
+	class UMaterial* MagneticMaterial;
+
+	/**Material that the cube uses if it is NOT magnetic*/
+	UPROPERTY(EditAnywhere)
+	class UMaterial* NonMagneticMaterial;
+
+	/**True if the cube is moving, false otherwise*/
 	bool bIsLaunched{ false };
 
+	/**Helper variable to determine when a function can and cant run*/
 	bool bCheckCubeVelocity{ false };
 
 	/**True if the Cube has enough speed to kill an enemy on impact, false otherwise*/
 	bool bCubeAboveThresholdSpeed{ false };
 
+	/**Helper variable to determine when a function can and cant run*/
 	bool bCubeMoved{ false };
 
 	/**True if the cube is falling downwards, false otherwise*/
 	bool bIsFalling{ false };
 
+	/**What direction the cube is being launced*/
 	FVector CurrentLaunchDirection;
 
+	/**Sets the launch direction directly downwards, used to make the cube fall into holes*/
 	void SetLaunchDirectionDown();
 
+	/**The speed at which the cube is launched*/
 	float BaseLaunchVelocity{ 300 };
 
+	/**What happens when the cube is hit*/
 	void HitReceived(FVector initLoc);
 
+	/**Pulls the cube down when it's above a hole*/
 	void AddDownWardForce();
 
+	/**Returns the cubes collision channel*/
+	ECollisionChannel GetCollisionChannel(AActor* cube);
+
+	bool GetIsMagnetic();
 
 private:
-
+	
 	/**Used to find which direction (X or Y) the cube should travel in when hit*/
 	FVector FindNearestDirection(float Xin, float Yin);
 
 	/**Moves the cube*/
 	void MoveCube();
 
+	/**Helper function that determines when the cube is no longer moving, resets variables accordingly*/
 	void CheckForBoundaryHit();
 
 	/**Initial spawn of the cube, so it can be reset*/
@@ -72,22 +94,23 @@ protected:
 	/**Handles the timer between cube launches*/
 	FTimerHandle CubeDelayTimerHandle;
 
-	FTimerHandle GravityDelayTimerHandle;
-
+	/**Helper Function that runs the check for if the cube is moving on a delay*/
 	void MoveCubeDoOnce();
 
+	/**Helper Function that that resets bCubeMoved*/
 	void ResetMoveCubeDoOnce();
 
+	/**Helper Function that resets bCheckCubeVelocity and runs ResetMoveCubeDoOnce*/
 	void CheckCubeVelocityDoOnce();
 	
-	/**Sets bCheckCubeVelocity back to false*/
+	/**Helper Function that resets bCheckCubeVelocity*/
 	void ResetCheckCubeVelocity();
 
 	/**Component that allows our cubes to move*/
 	UFloatingPawnMovement* MovementComponent;
 
 public:	
-
+	/**Pointer to the games main character*/
 	AAlbert_Character* AlbertCharacter;
 
 	// Called every frame

@@ -2,6 +2,10 @@
 
 
 #include "LevelTile.h"
+#include "Albert_Character.h"
+#include "Components/PrimitiveComponent.h"
+
+#define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
 
 // Sets default values
 ALevelTile::ALevelTile()
@@ -20,11 +24,34 @@ ALevelTile::ALevelTile()
 
 }
 
+// If the player is standing on a tile, a cube cannot enter that tile.
+void ALevelTile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Block Cube!"));
+		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_MAGNETICCUBE, ECR_Block);
+		AboveGroundCollision->SetVisibility(true);
+	}
+}
+
+// Resets the collision when the player leaves the tile.
+void ALevelTile::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex)
+{
+	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Block Cube!"));
+		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_MAGNETICCUBE, ECR_Overlap);
+		AboveGroundCollision->SetVisibility(false);
+	}
+}
+
 // Called when the game starts or when spawned
 void ALevelTile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	AboveGroundCollision->OnComponentBeginOverlap.AddDynamic(this, &ALevelTile::OnBeginOverlap);
+	AboveGroundCollision->OnComponentEndOverlap.AddDynamic(this, &ALevelTile::OnEndOverlap);
 }
 
 // Called every frame

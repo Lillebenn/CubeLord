@@ -15,8 +15,9 @@
 #include "CubeLordGameMode.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundBase.h"
-#include "ArmorPawn.h"
+#include "DrawDebugHelpers.h"
 
+#define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
 
 // Sets default values
 AAlbert_Character::AAlbert_Character()
@@ -100,8 +101,9 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAlbert_Character::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
-	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
-	PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
+	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::HammerSwing);
+	//PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
+	PlayerInputComponent->BindAction("MagnetPull", IE_Pressed, this, &AAlbert_Character::MagneticPull);
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
 
@@ -142,7 +144,7 @@ void AAlbert_Character::SetOverlapTrue()
 	bCanOverlap = true;
 }
 
-void AAlbert_Character::Death() 
+void AAlbert_Character::Death()
 {
 	bDeath = true;
 	CallDeath();
@@ -173,6 +175,7 @@ void AAlbert_Character::PauseGame()
 	GameModeRef->PauseGameFunc();
 }
 
+// Old Attack
 void AAlbert_Character::StartAttacking()
 {
 	CubeVolume->SetGenerateOverlapEvents(true);
@@ -180,6 +183,7 @@ void AAlbert_Character::StartAttacking()
 	isAttacking = true;
 }
 
+// Old Attack
 void AAlbert_Character::StopAttacking()
 {
 	CubeVolume->SetGenerateOverlapEvents(false);
@@ -187,6 +191,65 @@ void AAlbert_Character::StopAttacking()
 	isAttacking = false;
 }
 
+void AAlbert_Character::HammerSwing()
+{
+	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -50);
+	FVector End = Start + GetMesh()->GetForwardVector() * 100;
+
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	// Line trace to look for magnetic cubes.
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+
+	// Visualising the line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	if (bHit)
+	{
+		if(Cast<ACubePawn>(HitActor)->GetIsMagnetic() == true)
+		{
+			DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+			FVector CurrentLoc = GetMesh()->GetComponentLocation();
+			FVector EndLoc = CurrentLoc + GetMesh()->GetForwardVector() * 200;
+			Cast<ACubePawn>(HitActor)->HitReceived(EndLoc);
+		}
+		else
+		{
+			DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+			FVector CurrentLoc = GetMesh()->GetComponentLocation();
+			Cast<ACubePawn>(HitActor)->HitReceived(CurrentLoc);
+		}
+	}
+}
+
+void AAlbert_Character::MagneticPull()
+{
+	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0,0,-50);
+	FVector End = Start + GetMesh()->GetForwardVector() * 2000;
+	
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	// Line trace to look for magnetic cubes.
+	bool bHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, COLLISION_MAGNETICCUBE, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+	
+	// Visualising the line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	if (bHit)
+	{		
+			DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
+			FVector MagnetLoc = GetMesh()->GetComponentLocation();
+			Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+	}
+}
+
+// Old Attack
 void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
@@ -200,14 +263,7 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				Cast<ACubePawn>(OtherActor)->HitReceived(CurrentLoc);
 				bCanOverlap = false;
 			}
-
-			if (OtherActor->IsA(AArmorPawn::StaticClass()))
-			{
-				Armor = Cast<AArmorPawn>(OtherActor);
-				Armor->HandleDestruction();
-			}
 		}
-	
 }
 
 //	Raycasting to beneath Alberts Capsule Component
@@ -239,14 +295,17 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 		{
 			if (ActorHit->ActorHasTag(TEXT("Block")))
 			{
+				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
 				PlayEffect(Particle2);
 				PlaySound(Sound1, SocketName);
+				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound1, GetMesh()->GetSocketLocation(SocketName));
 			}
-			// if (ActorHit->ActorHasTag(TEXT("Tile")))
 			else
 			{
+				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
 				PlayEffect(Particle1);
 				PlaySound(Sound2, SocketName);
+				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound2, GetMesh()->GetSocketLocation(SocketName));
 			}
 		}
 		bActorHit = true;
@@ -255,7 +314,7 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 	{
 		if (bActorHit)
 		{
-			// UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
+			UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
 		}
 		bActorHit = false;
 	}
@@ -274,7 +333,7 @@ void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName)
 void AAlbert_Character::TESTING() 
 {
 	// GameModeRef->StartGame();
-	// GameModeRef->TitleScreen(true);
+	GameModeRef->TitleScreen(true);
 	// GameModeRef->GoToTitleScreen(true);
 }
 
