@@ -214,8 +214,8 @@ void AAlbert_Character::HammerSwing()
 	AActor* HitActor = Hit.GetActor();
 
 	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
-		if (bHit)
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
+		if (bHit && HitActor->IsA(ACubePawn::StaticClass()))
 		{
 			if(Cast<ACubePawn>(HitActor)->GetIsMagnetic() == true)
 			{
@@ -253,7 +253,7 @@ void AAlbert_Character::MagneticPull()
 	AActor* HitActor = Hit.GetActor();
 	
 	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
 		if (bHit)
 		{		
 				DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
