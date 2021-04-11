@@ -33,6 +33,8 @@ private:
 	class ASmallGate* Gate{ nullptr };
 	AActor* GateActor;
 
+	class AAlbert_Character* Albert{ nullptr };
+
 public:
 	// Sets default values for this pawn's properties
 	AArmorPawn();

@@ -38,11 +38,19 @@ public:
 
 	bool bCubeMoved{ false };
 
+	/**True if the cube is falling downwards, false otherwise*/
+	bool bIsFalling{ false };
+
 	FVector CurrentLaunchDirection;
+
+	void SetLaunchDirectionDown();
 
 	float BaseLaunchVelocity{ 300 };
 
 	void HitReceived(FVector initLoc);
+
+	void AddDownWardForce();
+
 
 private:
 
@@ -63,6 +71,8 @@ protected:
 
 	/**Handles the timer between cube launches*/
 	FTimerHandle CubeDelayTimerHandle;
+
+	FTimerHandle GravityDelayTimerHandle;
 
 	void MoveCubeDoOnce();
 

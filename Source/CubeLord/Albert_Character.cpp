@@ -142,6 +142,12 @@ void AAlbert_Character::SetOverlapTrue()
 	bCanOverlap = true;
 }
 
+void AAlbert_Character::Death() 
+{
+	bDeath = true;
+	CallDeath();
+}
+
 void AAlbert_Character::RotateCamera()
 {
 	FRotator Rotation = CameraRoot->GetComponentRotation();
@@ -249,7 +255,7 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 	{
 		if (bActorHit)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
+			// UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
 		}
 		bActorHit = false;
 	}

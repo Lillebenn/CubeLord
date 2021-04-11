@@ -6,6 +6,7 @@
 #include "CubePawn.h"
 #include "Components/CapsuleComponent.h"
 #include "SmallGate.h"
+#include "Albert_Character.h"
 
 // Sets default values
 AArmorPawn::AArmorPawn()
@@ -69,5 +70,11 @@ void AArmorPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	if (OtherActor->IsA(ACubePawn::StaticClass()))
 	{
 		HandleDestruction();
+	}
+	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
+	{
+		Albert = Cast<AAlbert_Character>(OtherActor);
+		Albert->Death();
+		UE_LOG(LogTemp, Warning, TEXT("Albert will die"));
 	}
 }
