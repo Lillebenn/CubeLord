@@ -15,6 +15,7 @@
 #include "CubeLordGameMode.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundBase.h"
+#include "ArmorPawn.h"
 
 
 // Sets default values
@@ -193,8 +194,14 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				Cast<ACubePawn>(OtherActor)->HitReceived(CurrentLoc);
 				bCanOverlap = false;
 			}
+
+			if (OtherActor->IsA(AArmorPawn::StaticClass()))
+			{
+				Armor = Cast<AArmorPawn>(OtherActor);
+				Armor->HandleDestruction();
+			}
 		}
-		
+	
 }
 
 //	Raycasting to beneath Alberts Capsule Component
@@ -226,17 +233,14 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 		{
 			if (ActorHit->ActorHasTag(TEXT("Block")))
 			{
-				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
 				PlayEffect(Particle2);
 				PlaySound(Sound1, SocketName);
-				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound1, GetMesh()->GetSocketLocation(SocketName));
 			}
+			// if (ActorHit->ActorHasTag(TEXT("Tile")))
 			else
 			{
-				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
 				PlayEffect(Particle1);
 				PlaySound(Sound2, SocketName);
-				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound2, GetMesh()->GetSocketLocation(SocketName));
 			}
 		}
 		bActorHit = true;
@@ -264,7 +268,7 @@ void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName)
 void AAlbert_Character::TESTING() 
 {
 	// GameModeRef->StartGame();
-	GameModeRef->TitleScreen(true);
+	// GameModeRef->TitleScreen(true);
 	// GameModeRef->GoToTitleScreen(true);
 }
 

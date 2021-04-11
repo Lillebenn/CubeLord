@@ -28,10 +28,6 @@ private:
 	UParticleSystem* Particle1{ nullptr };
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* Particle2{ nullptr };
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	// UAudioComponent* Sound1;
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	// UAudioComponent* Sound2;
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USoundBase* Sound1;
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
@@ -74,6 +70,9 @@ private:
 	void PlaySound(USoundBase* SoundToPlay, FName SocketName);
 
 	void TESTING();
+	class AArmorPawn* Armor;
+	UPROPERTY(EditAnywhere)
+	AActor* ArmorActor;
 	
 public:
 	// Sets default values for this character's properties
