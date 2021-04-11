@@ -29,6 +29,7 @@ void ALevelTile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 {
 	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Block Cube!"));
 		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_CUBE, ECR_Block);
 	}
 }
@@ -38,6 +39,7 @@ void ALevelTile::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 {
 	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("No Block Cube!"));
 		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_CUBE, ECR_Overlap);
 	}
 }
