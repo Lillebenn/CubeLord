@@ -32,6 +32,8 @@ private:
 	USoundBase* Sound1;
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USoundBase* Sound2;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USoundBase* DeathSound;
 
 	
 
