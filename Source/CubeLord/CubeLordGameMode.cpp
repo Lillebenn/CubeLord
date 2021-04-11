@@ -46,7 +46,7 @@ void ACubeLordGameMode::StartGame()
 	if (World)
 	{
 		// UGameplayStatics::OpenLevel(World, "CharacterMovement_Testing_Map");	//	Testing Purposes Only
-		UGameplayStatics::OpenLevel(World, "Level_1_Environment");
+		UGameplayStatics::OpenLevel(World, "Level_1_E");
 	}
 }
 
