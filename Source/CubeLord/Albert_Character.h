@@ -64,6 +64,7 @@ private:
 	void ResetLevel();
 	void PauseGame();
 
+	// functions for simulating attacks - TODO replace when hammer animation is in.
 	void StartAttacking();
 	void StopAttacking();
 

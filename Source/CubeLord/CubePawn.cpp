@@ -58,7 +58,6 @@ void ACubePawn::HitReceived(FVector initLoc)
 	bCubeMoved = true;
 }
 
-// Used to simulate "Roadrunner" gravity
 void ACubePawn::AddDownWardForce()
 {
 	FVector Start = GetActorLocation() + FVector(0, 0, -100);
