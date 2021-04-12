@@ -93,6 +93,9 @@ public:
 	// Sets default values for this character's properties
 	AAlbert_Character();
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bAltControls{ false };
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

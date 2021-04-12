@@ -28,8 +28,8 @@ ACubePawn::ACubePawn()
 	this->MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement Component"));
 	this->MovementComponent->UpdatedComponent = RootComponent;
 
-	MagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("MagneticMaterial"));
-	NonMagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NonMagneticMaterial"));
+	//MagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("MagneticMaterial"));
+	//NonMagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NonMagneticMaterial"));
 
 	bIsLaunched = false;
 	bCheckCubeVelocity = false;
@@ -268,12 +268,12 @@ void ACubePawn::BeginPlay()
 	AlbertCharacter = Cast<AAlbert_Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (bIsMagnetic)
 	{
-		CubeMesh->SetMaterial(0, MagneticMaterial);
+		//CubeMesh->SetMaterial(0, MagneticMaterial); //TODO: Redo
 		CubeMesh->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
 	}
 	else
 	{
-		CubeMesh->SetMaterial(0, NonMagneticMaterial);
+		//CubeMesh->SetMaterial(0, NonMagneticMaterial); //TODO: Redo
 	}
 }
 
