@@ -28,7 +28,7 @@ ACubePawn::ACubePawn()
 	this->MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement Component"));
 	this->MovementComponent->UpdatedComponent = RootComponent;
 
-	//MagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("MagneticMaterial"));
+	//MagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("MagneticMaterial")); //TODO: Redo so that it does not recompile on each play
 	//NonMagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NonMagneticMaterial"));
 
 	bIsLaunched = false;
