@@ -18,6 +18,7 @@
 #include "DrawDebugHelpers.h"
 
 #define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
+#define COLLISION_FLOOR ECC_GameTraceChannel3
 
 // Sets default values
 AAlbert_Character::AAlbert_Character()
@@ -291,7 +292,7 @@ FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName)
 		Hit,
 		GetMesh()->GetSocketLocation(SocketName),
 		GetMesh()->GetSocketLocation(SocketName) - FVector(0.0f, 0.0f, Range),
-		FCollisionObjectQueryParams(ECollisionChannel::ECC_WorldStatic),
+		FCollisionObjectQueryParams(ECollisionChannel::COLLISION_FLOOR),
 		TraceParams
 	);
 	
