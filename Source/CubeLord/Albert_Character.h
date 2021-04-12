@@ -96,6 +96,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bAltControls{ false };
 
+	class ACubePawn* CurrentOverlappingCubePawn;
+	FVector CurrentCubeLocation;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -107,6 +110,9 @@ public:
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	void SetOverlapTrue();
 
