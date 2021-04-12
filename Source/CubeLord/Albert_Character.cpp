@@ -73,11 +73,16 @@ void AAlbert_Character::BeginPlay()
 	Super::BeginPlay();
 	GameModeRef = Cast<ACubeLordGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	CubeVolume->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnOverlap);
+	CubeVolume->OnComponentEndOverlap.AddDynamic(this, &AAlbert_Character::OnOverlapEnd);
 
 	//	Simple way of setting cameralocation relative to the player start
 	//		NEEDS TO BE CHANGED LATER
 	CamLocation = GetActorLocation() + FVector(200.0f, 0.0f, 0.0f);
 
+	if (bAltControls)
+	{
+		CubeVolume->SetGenerateOverlapEvents(true);
+	}
 }
 
 // Called every frame
@@ -102,8 +107,11 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAlbert_Character::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
-	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::HammerSwing);
-	// PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
+	//PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::HammerSwing);
+
+	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
+	PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
+
 	PlayerInputComponent->BindAction("MagnetPull", IE_Pressed, this, &AAlbert_Character::MagneticPull);
 	// PlayerInputComponent->BindAction("MagnetPull", IE_Released, this, &AAlbert_Character::StopPulling);
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
@@ -139,7 +147,6 @@ void AAlbert_Character::MoveRight(float Value)
 		AddMovementInput(Direction, Value);
 	}
 }
-
 
 void AAlbert_Character::SetOverlapTrue()
 {
@@ -180,15 +187,34 @@ void AAlbert_Character::PauseGame()
 // Old Attack
 void AAlbert_Character::StartAttacking()
 {
-	CubeVolume->SetGenerateOverlapEvents(true);
-	UE_LOG(LogTemp, Warning, TEXT("Albert Smash!"));
-	isAttacking = true;
+	if (!bAltControls)
+	{
+		CubeVolume->SetGenerateOverlapEvents(true);
+		UE_LOG(LogTemp, Warning, TEXT("Albert Smash!"));
+		isAttacking = true;
+	}
+	else
+	{
+		isAttacking = true;
+		if (CurrentOverlappingCubePawn != nullptr)
+		{
+			Cast<ACubePawn>(CurrentOverlappingCubePawn)->HitReceived(CurrentCubeLocation);
+		}		
+	}
 }
 
 // Stop Attacking
 void AAlbert_Character::StopAttacking()
 {
-	isAttacking = false;
+	if (!bAltControls)
+	{
+		CubeVolume->SetGenerateOverlapEvents(false);
+		isAttacking = false;
+	}
+	else
+	{
+		isAttacking = false;
+	}
 }
 
 // Stop Pulling
@@ -215,8 +241,8 @@ void AAlbert_Character::HammerSwing()
 	AActor* HitActor = Hit.GetActor();
 
 	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
-		if (bHit)
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
+		if (bHit && HitActor->IsA(ACubePawn::StaticClass()))
 		{
 			if(Cast<ACubePawn>(HitActor)->GetIsMagnetic() == true)
 			{
@@ -254,7 +280,7 @@ void AAlbert_Character::MagneticPull()
 	AActor* HitActor = Hit.GetActor();
 	
 	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
 		if (bHit)
 		{		
 				DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
@@ -270,7 +296,9 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-	// UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
+	if (!bAltControls)
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
 		if (bCanOverlap)
 		{
 			if (OtherActor->IsA(ACubePawn::StaticClass()))
@@ -280,6 +308,28 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				bCanOverlap = false;
 			}
 		}
+	}
+	else
+	{
+		if (OtherActor->IsA(ACubePawn::StaticClass()))
+		{
+
+
+			CurrentCubeLocation = GetCapsuleComponent()->GetComponentLocation();
+			CurrentOverlappingCubePawn = Cast<ACubePawn>(OtherActor);
+		}		
+	}
+}
+
+void AAlbert_Character::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (CurrentOverlappingCubePawn != nullptr)
+	{
+		if (CurrentOverlappingCubePawn == OtherActor)
+		{
+			CurrentOverlappingCubePawn = nullptr;
+		}
+	}
 }
 
 //	Raycasting to beneath Alberts Capsule Component

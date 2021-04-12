@@ -28,8 +28,8 @@ ACubePawn::ACubePawn()
 	this->MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement Component"));
 	this->MovementComponent->UpdatedComponent = RootComponent;
 
-	MagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("MagneticMaterial"));
-	NonMagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NonMagneticMaterial"));
+	//MagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("MagneticMaterial")); //TODO: Redo so that it does not recompile on each play, and level does not crash on build
+	//NonMagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NonMagneticMaterial"));
 
 	bIsLaunched = false;
 	bCheckCubeVelocity = false;
@@ -45,25 +45,30 @@ void ACubePawn::HitReceived(FVector initLoc)
 {
 	FVector tempVec;
 	FVector currLoc = GetActorLocation();
-	FVector HitDirection = initLoc - currLoc;
+	FVector HitDirection = FVector(initLoc.X, initLoc.Y, 0.f) - FVector(currLoc.X, currLoc.Y, 0.f);
 	HitDirection.Normalize();
+
 	UE_LOG(LogTemp, Warning, TEXT("Hitdirection: %s"), *HitDirection.ToString());
+
 	if (!bIsLaunched)
 	{
 		tempVec = FindNearestDirection(HitDirection.X, HitDirection.Y);
 		UE_LOG(LogTemp, Warning, TEXT("Tempvec after findnearest: %s"), *tempVec.ToString());
-	}
-	tempVec.Z = 0;
-	if (!bIsMagnetic)
-	{
-	tempVec = tempVec * -1;
-	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("Direction the cube was launched: %s"), *tempVec.ToString());
 
-	CurrentLaunchDirection = tempVec;
-	bIsLaunched = true;
-	bCubeMoved = true;
+
+		tempVec.Z = 0;
+		if (!bIsMagnetic)
+		{
+			tempVec = tempVec * -1;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Direction the cube was launched: %s"), *tempVec.ToString());
+
+		CurrentLaunchDirection = tempVec;
+		bIsLaunched = true;
+		bCubeMoved = true;
+	}
+
 }
 
 void ACubePawn::AddDownWardForce()
@@ -119,10 +124,12 @@ FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 	bool Xnegative{ false };
 	bool Ynegative{ false };
 	FVector tempVec;
+
+	//UE_LOG(LogTemp, Warning, TEXT("Hitdirection: %d, %d"), Xin, Yin);
 	
 	if (FMath::FloorToInt(tempX) == 0 && FMath::FloorToInt(tempY) == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Bad direction: %s"), *tempVec.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Bad direction: %s, X=%f Y=&f"), *tempVec.ToString(), tempX, tempY);
 		return tempVec;
 	}
 	
@@ -216,8 +223,8 @@ void ACubePawn::CheckForBoundaryHit()
 		if (vecSize <= 0)
 		{
 			AlbertCharacter->SetOverlapTrue();
-			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));
 			bIsLaunched = false;
+			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));			
 		}	
 	}	
 }
@@ -268,12 +275,12 @@ void ACubePawn::BeginPlay()
 	AlbertCharacter = Cast<AAlbert_Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (bIsMagnetic)
 	{
-		CubeMesh->SetMaterial(0, MagneticMaterial);
+		//CubeMesh->SetMaterial(0, MagneticMaterial); //TODO: Redo
 		CubeMesh->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
 	}
 	else
 	{
-		CubeMesh->SetMaterial(0, NonMagneticMaterial);
+		//CubeMesh->SetMaterial(0, NonMagneticMaterial); //TODO: Redo
 	}
 }
 
