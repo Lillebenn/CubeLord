@@ -53,6 +53,9 @@ public:
 	/**True if the cube is falling downwards, false otherwise*/
 	bool bIsFalling{ false };
 
+	/**True if the magnetic cube should be pushed, false otherwise*/
+	bool bMagneticHit{ false };
+
 	/**What direction the cube is being launced*/
 	FVector CurrentLaunchDirection;
 
@@ -70,6 +73,8 @@ public:
 
 	/**Returns the cubes collision channel*/
 	ECollisionChannel GetCollisionChannel(AActor* cube);
+
+	void SetMagneticHit();
 
 	bool GetIsMagnetic();
 

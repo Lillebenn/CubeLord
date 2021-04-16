@@ -197,6 +197,7 @@ void AAlbert_Character::StartAttacking()
 		isAttacking = true;
 		if (CurrentOverlappingCubePawn != nullptr)
 		{
+			Cast<ACubePawn>(CurrentOverlappingCubePawn)->SetMagneticHit();
 			Cast<ACubePawn>(CurrentOverlappingCubePawn)->HitReceived(CurrentCubeLocation);
 		}		
 	}
@@ -312,8 +313,6 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	{
 		if (OtherActor->IsA(ACubePawn::StaticClass()))
 		{
-
-
 			CurrentCubeLocation = GetCapsuleComponent()->GetComponentLocation();
 			CurrentOverlappingCubePawn = Cast<ACubePawn>(OtherActor);
 		}		

@@ -57,7 +57,7 @@ void ACubePawn::HitReceived(FVector initLoc)
 
 
 		tempVec.Z = 0;
-		if (!bIsMagnetic)
+		if (!bIsMagnetic || bMagneticHit)
 		{
 			tempVec = tempVec * -1;
 		}
@@ -67,6 +67,7 @@ void ACubePawn::HitReceived(FVector initLoc)
 		CurrentLaunchDirection = tempVec;
 		bIsLaunched = true;
 		bCubeMoved = true;
+		bMagneticHit = false;
 	}
 
 }
@@ -107,6 +108,11 @@ ECollisionChannel ACubePawn::GetCollisionChannel(AActor* cube)
 {
 	ECollisionChannel temp = CubeMesh->UPrimitiveComponent::GetCollisionObjectType();
 	return temp;
+}
+
+void ACubePawn::SetMagneticHit()
+{
+	bMagneticHit = true;
 }
 
 bool ACubePawn::GetIsMagnetic()
@@ -276,7 +282,7 @@ void ACubePawn::BeginPlay()
 	if (bIsMagnetic)
 	{
 		//CubeMesh->SetMaterial(0, MagneticMaterial); //TODO: Redo
-		CubeMesh->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
+		GridCollision->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
 	}
 	else
 	{

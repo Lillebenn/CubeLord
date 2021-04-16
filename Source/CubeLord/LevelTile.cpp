@@ -19,12 +19,9 @@ ALevelTile::ALevelTile()
 
 	TileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tile"));
 	TileMesh->SetupAttachment(RootComponent);
-
-	
-
 }
 
-// If the player is standing on a tile, a cube cannot enter that tile.
+// If the player is standing on a tile, a magnetic cube cannot enter that tile.
 void ALevelTile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
@@ -35,12 +32,13 @@ void ALevelTile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	}
 }
 
-// Resets the collision when the player leaves the tile.
+// Resets the collision response when the player leaves the tile.
 void ALevelTile::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex)
 {
 	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Block Cube!"));
+		
 		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_MAGNETICCUBE, ECR_Overlap);
 		AboveGroundCollision->SetVisibility(false);
 	}
