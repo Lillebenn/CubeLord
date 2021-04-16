@@ -11,6 +11,8 @@
 #include "Components/PrimitiveComponent.h"
 #include "CubePawn.generated.h"
 
+class UMaterialInstanceDynamic;
+
 UCLASS()
 class CUBELORD_API ACubePawn : public APawn
 {
@@ -31,12 +33,12 @@ public:
 	bool bIsMagnetic{ false };
 
 	/**Material that the cube uses if it is magnetic*/
-	UPROPERTY(EditAnywhere)
-	class UMaterial* MagneticMaterial;
+	// UPROPERTY(EditAnywhere)
+	// class UMaterial* MagneticMaterial;
 
 	/**Material that the cube uses if it is NOT magnetic*/
-	UPROPERTY(EditAnywhere)
-	class UMaterial* NonMagneticMaterial;
+	// UPROPERTY(EditAnywhere)
+	// class UMaterial* NonMagneticMaterial;
 
 	/**True if the cube is moving, false otherwise*/
 	bool bIsLaunched{ false };
@@ -91,6 +93,9 @@ private:
 
 	/**Initial spawn of the cube, so it can be reset*/
 	FTransform InitialLocation;
+
+	/**Dynamic Material Instance used to change the appearance of the magnetic cube*/
+	UMaterialInstanceDynamic* DynamicMaterial;
 
 protected:
 	// Called when the game starts or when spawned

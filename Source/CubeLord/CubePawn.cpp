@@ -9,6 +9,10 @@
 #include "Components/PrimitiveComponent.h"
 #include "DrawDebugHelpers.h"
 #include "LevelTile.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Components/StaticMeshComponent.h"
+#include "Materials/MaterialInterface.h"
+
 
 #define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
 
@@ -135,7 +139,7 @@ FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 	
 	if (FMath::FloorToInt(tempX) == 0 && FMath::FloorToInt(tempY) == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Bad direction: %s, X=%f Y=&f"), *tempVec.ToString(), tempX, tempY);
+		UE_LOG(LogTemp, Warning, TEXT("Bad direction: %s, X=%f Y=%f"), *tempVec.ToString(), tempX, tempY);
 		return tempVec;
 	}
 	
@@ -277,11 +281,21 @@ void ACubePawn::ResetCheckCubeVelocity()
 void ACubePawn::BeginPlay()
 {
 	Super::BeginPlay();
+	auto Cube = FindComponentByClass<UStaticMeshComponent>();
+	auto Material = Cube->GetMaterial(0);
+
+	DynamicMaterial = UMaterialInstanceDynamic::Create(Material, NULL);
+	Cube->SetMaterial(0, DynamicMaterial);
+
 	InitialLocation = GetActorTransform();
 	AlbertCharacter = Cast<AAlbert_Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (bIsMagnetic)
 	{
-		//CubeMesh->SetMaterial(0, MagneticMaterial); //TODO: Redo
+		DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = marble, 1 = Bronze
+		DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
+		DynamicMaterial->SetScalarParameterValue(TEXT("MetallicBlend"), 0.8); // Metallic
+		DynamicMaterial->SetScalarParameterValue(TEXT("Marble"), 0); // sets it below 0.5 so that it uses the metallic normal map
+
 		GridCollision->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
 	}
 	else
