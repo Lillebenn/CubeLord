@@ -32,9 +32,6 @@ ACubePawn::ACubePawn()
 	this->MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement Component"));
 	this->MovementComponent->UpdatedComponent = RootComponent;
 
-	//MagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("MagneticMaterial")); //TODO: Redo so that it does not recompile on each play, and level does not crash on build
-	//NonMagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NonMagneticMaterial"));
-
 	bIsLaunched = false;
 	bCheckCubeVelocity = false;
 }
@@ -291,16 +288,12 @@ void ACubePawn::BeginPlay()
 	AlbertCharacter = Cast<AAlbert_Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (bIsMagnetic)
 	{
-		DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = marble, 1 = Bronze
+		DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = marble, 1 = Nickel
 		DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
 		DynamicMaterial->SetScalarParameterValue(TEXT("MetallicBlend"), 0.8); // Metallic
 		DynamicMaterial->SetScalarParameterValue(TEXT("Marble"), 0); // sets it below 0.5 so that it uses the metallic normal map
 
 		GridCollision->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
-	}
-	else
-	{
-		//CubeMesh->SetMaterial(0, NonMagneticMaterial); //TODO: Redo
 	}
 }
 

@@ -32,22 +32,11 @@ public:
 	UPROPERTY(Category = Cube, EditAnywhere)
 	bool bIsMagnetic{ false };
 
-	/**Material that the cube uses if it is magnetic*/
-	// UPROPERTY(EditAnywhere)
-	// class UMaterial* MagneticMaterial;
-
-	/**Material that the cube uses if it is NOT magnetic*/
-	// UPROPERTY(EditAnywhere)
-	// class UMaterial* NonMagneticMaterial;
-
 	/**True if the cube is moving, false otherwise*/
 	bool bIsLaunched{ false };
 
 	/**Helper variable to determine when a function can and cant run*/
 	bool bCheckCubeVelocity{ false };
-
-	/**True if the Cube has enough speed to kill an enemy on impact, false otherwise*/
-	bool bCubeAboveThresholdSpeed{ false };
 
 	/**Helper variable to determine when a function can and cant run*/
 	bool bCubeMoved{ false };
@@ -76,8 +65,10 @@ public:
 	/**Returns the cubes collision channel*/
 	ECollisionChannel GetCollisionChannel(AActor* cube);
 
+	/**Used to set bMagneticHit to true*/
 	void SetMagneticHit();
 
+	/**Returns bIsMagnetic*/
 	bool GetIsMagnetic();
 
 private:
