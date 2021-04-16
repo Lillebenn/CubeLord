@@ -62,6 +62,9 @@ public:
 	/**Pulls the cube down when it's above a hole*/
 	void AddDownWardForce();
 
+	/**Uses a Linetrace to make sure the cube is properly aligned with the leveltile grid*/
+	void AlignmentCheck();
+
 	/**Returns the cubes collision channel*/
 	ECollisionChannel GetCollisionChannel(AActor* cube);
 

@@ -105,6 +105,31 @@ void ACubePawn::AddDownWardForce()
 	}
 }
 
+void ACubePawn::AlignmentCheck()
+{
+	FVector Start = GetActorLocation() + FVector(0, 0, -100);
+	FVector End = GetActorLocation() + FVector(0, 0, -200);
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	// Line trace to look for actors below the cube
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+
+	// Visualising the line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	if (bHit && HitActor->IsA(ALevelTile::StaticClass()))
+	{
+		FVector TargetLoc = Cast<ALevelTile>(HitActor)->GetActorLocation();
+		FVector CurrentLoc = GetActorLocation();
+		FVector NewLoc(TargetLoc.X, TargetLoc.Y, CurrentLoc.Z);
+		SetActorLocation(NewLoc, false);
+		UE_LOG(LogTemp, Warning, TEXT("Cube realigned!"));
+	}
+}
+
 ECollisionChannel ACubePawn::GetCollisionChannel(AActor* cube)
 {
 	ECollisionChannel temp = CubeMesh->UPrimitiveComponent::GetCollisionObjectType();
@@ -231,7 +256,8 @@ void ACubePawn::CheckForBoundaryHit()
 		{
 			AlbertCharacter->SetOverlapTrue();
 			bIsLaunched = false;
-			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));			
+			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));	
+			AlignmentCheck();
 		}	
 	}	
 }
