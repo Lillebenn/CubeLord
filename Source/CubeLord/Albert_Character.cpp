@@ -15,6 +15,7 @@
 #include "CubeLordGameMode.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundBase.h"
+#include "Sound/SoundAttenuation.h"
 #include "DrawDebugHelpers.h"
 
 #define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
@@ -83,6 +84,10 @@ void AAlbert_Character::BeginPlay()
 	{
 		CubeVolume->SetGenerateOverlapEvents(true);
 	}
+
+	// SoundAtt->~FBaseAttenuationSettings();
+	// SoundAtt->FalloffMode;
+	// SoundAtt->~FBaseAttenuationSettings()
 }
 
 // Called every frame
@@ -332,7 +337,7 @@ void AAlbert_Character::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor
 	}
 }
 
-//	Raycasting to beneath Alberts Capsule Component
+//	Raycasting to beneath Alberts BoneSocket
 FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName) 
 {
 	FHitResult Hit;
@@ -361,17 +366,13 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 		{
 			if (ActorHit->ActorHasTag(TEXT("Block")))
 			{
-				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
 				PlayEffect(Particle2);
 				PlaySound(Sound1, SocketName);
-				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound1, GetMesh()->GetSocketLocation(SocketName));
 			}
 			else
 			{
-				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
 				PlayEffect(Particle1);
 				PlaySound(Sound2, SocketName);
-				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound2, GetMesh()->GetSocketLocation(SocketName));
 			}
 		}
 		bActorHit = true;
@@ -393,7 +394,7 @@ void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay)
 
 void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName) 
 {
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName));
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName), 1.0f, 1.0f, 0.0f, SoundAtt);
 }
 
 void AAlbert_Character::TESTING() 

@@ -35,6 +35,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USoundBase* DeathSound;
 
+	 	
+	// struct FSoundAttenuationSettings* SoundAtt;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	class USoundAttenuation* SoundAtt;
 	
 
 	/** Overlap volume to check for possible cube targets */
