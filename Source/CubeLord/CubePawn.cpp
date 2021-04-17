@@ -158,10 +158,11 @@ FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 	FVector tempVec;
 
 	//UE_LOG(LogTemp, Warning, TEXT("Hitdirection: %d, %d"), Xin, Yin);
-	
-	if (FMath::FloorToInt(tempX) == 0 && FMath::FloorToInt(tempY) == 0)
+
+	if (FMath::RoundToInt(tempX) == 0 && FMath::RoundToInt(tempY) == 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bad direction: %s, X=%f Y=%f"), *tempVec.ToString(), tempX, tempY);
+		bIsLaunched = false;
 		return tempVec;
 	}
 	
