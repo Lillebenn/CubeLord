@@ -109,14 +109,13 @@ private:
 	/**Plays a sound at a location*/
 	void PlaySound(USoundBase* SoundToPlay, FName SocketName);
 
+	/**Pointer to the enemy character "Haunted Armor"*/
 	void TESTING();
 	class AArmorPawn* Armor;
-
-	/**Pointer to the enemy character "Haunted Armor"*/
 	UPROPERTY(EditAnywhere)
 	AActor* ArmorActor;
 	
-	/**True if dead, false otherwise*/
+	/**True if the character is dead, false otherwise*/
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bDeath{ false };
 

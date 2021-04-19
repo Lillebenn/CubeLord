@@ -346,7 +346,7 @@ void AAlbert_Character::CollisionUnderPlayerCheck()
 	AActor* HitActor = Hit.GetActor();
 
 	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 2.0f, 0, 5.0f);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 0.5f, 0, 5.0f);
 
 	if (HitActor->IsA(ALevelTile::StaticClass()))
 	{
