@@ -16,6 +16,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundBase.h"
 #include "DrawDebugHelpers.h"
+#include "Leveltile.h"
 
 #define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
 
@@ -94,6 +95,8 @@ void AAlbert_Character::Tick(float DeltaTime)
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
 
+	CollisionUnderPlayerCheck();
+
 	//	RayTracing to check what is beneath the player
 	RayTraceFromSocket(4.0f, "BoneSocket");
 }
@@ -164,7 +167,6 @@ void AAlbert_Character::RotateCamera()
 	Rotation.Yaw = TargetYaw;
 	CameraRoot->SetWorldRotation(Rotation);
 }
-
 
 void AAlbert_Character::MoveCamera() 
 {
@@ -327,6 +329,42 @@ void AAlbert_Character::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor
 		{
 			CurrentOverlappingCubePawn = nullptr;
 		}
+	}
+}
+
+void AAlbert_Character::CollisionUnderPlayerCheck()
+{
+	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -50);
+	FVector End = Start + FVector(0, 0, -1000);
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	// Line trace to look for actors below the cube
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+
+	// Visualising the line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 2.0f, 0, 5.0f);
+
+	if (HitActor->IsA(ALevelTile::StaticClass()))
+	{
+		if(Hit.bBlockingHit)
+		{
+			// Sets the first tiles pointer
+			if (CurrentLevelTile == nullptr)
+			{
+				CurrentLevelTile = Cast<ALevelTile>(HitActor);
+				Cast<ALevelTile>(CurrentLevelTile)->SetBlockResponse();
+			}
+			if (HitActor->IsA(ALevelTile::StaticClass()) && HitActor != CurrentLevelTile)
+			{
+				Cast<ALevelTile>(CurrentLevelTile)->ResetCollisionResponse(); // Reset old tile collision
+				CurrentLevelTile = Cast<ALevelTile>(HitActor); // set new active tile
+				Cast<ALevelTile>(CurrentLevelTile)->SetBlockResponse(); // Set new tile to block Cubes
+			}
+		}		
 	}
 }
 

@@ -20,7 +20,7 @@ ALevelTile::ALevelTile()
 	TileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tile"));
 	TileMesh->SetupAttachment(RootComponent);
 }
-
+/*
 // If the player is standing on a tile, a magnetic cube cannot enter that tile.
 void ALevelTile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -42,14 +42,26 @@ void ALevelTile::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 		AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_MAGNETICCUBE, ECR_Overlap);
 		AboveGroundCollision->SetVisibility(false);
 	}
+}*/
+
+void ALevelTile::SetBlockResponse()
+{
+	AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_MAGNETICCUBE, ECR_Block);
+	AboveGroundCollision->SetVisibility(true);
+}
+
+void ALevelTile::ResetCollisionResponse()
+{
+	AboveGroundCollision->UPrimitiveComponent::SetCollisionResponseToChannel(COLLISION_MAGNETICCUBE, ECR_Overlap);
+	AboveGroundCollision->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
 void ALevelTile::BeginPlay()
 {
 	Super::BeginPlay();
-	AboveGroundCollision->OnComponentBeginOverlap.AddDynamic(this, &ALevelTile::OnBeginOverlap);
-	AboveGroundCollision->OnComponentEndOverlap.AddDynamic(this, &ALevelTile::OnEndOverlap);
+	// AboveGroundCollision->OnComponentBeginOverlap.AddDynamic(this, &ALevelTile::OnBeginOverlap);
+	// AboveGroundCollision->OnComponentEndOverlap.AddDynamic(this, &ALevelTile::OnEndOverlap);
 }
 
 // Called every frame
