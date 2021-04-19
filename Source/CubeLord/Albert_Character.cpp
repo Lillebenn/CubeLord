@@ -345,14 +345,12 @@ void AAlbert_Character::CollisionUnderPlayerCheck()
 	// Reference to an actor we hit
 	AActor* HitActor = Hit.GetActor();
 
-	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 0.5f, 0, 5.0f);
-
-	if (HitActor->IsA(ALevelTile::StaticClass()))
+	if(Hit.bBlockingHit)
 	{
-		if(Hit.bBlockingHit)
+		// Visualising the line
+		DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 0.5f, 0, 5.0f);
+		if (HitActor->IsA(ALevelTile::StaticClass()))
 		{
-			// Sets the first tiles pointer
 			if (CurrentLevelTile == nullptr)
 			{
 				CurrentLevelTile = Cast<ALevelTile>(HitActor);

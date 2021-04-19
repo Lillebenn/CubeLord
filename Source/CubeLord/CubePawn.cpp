@@ -255,7 +255,7 @@ void ACubePawn::CheckForBoundaryHit()
 		// UE_LOG(LogTemp, Warning, TEXT("vecSize is: %f"), vecSize);
 		if (vecSize <= 0)
 		{
-			AlbertCharacter->SetOverlapTrue();
+			AlbertCharacter->SetOverlapTrue(); // TODO replace with animationLoop
 			bIsLaunched = false;
 			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));	
 			AlignmentCheck();
