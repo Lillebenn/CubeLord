@@ -88,7 +88,7 @@ private:
 	/**Initial spawn of the cube, so it can be reset*/
 	FTransform InitialLocation;
 
-	/**Dynamic Material Instance used to change the appearance of the magnetic cube*/
+	/**Dynamic Material Instance used to change the appearance of the magnetic cubes*/
 	UMaterialInstanceDynamic* DynamicMaterial;
 
 protected:

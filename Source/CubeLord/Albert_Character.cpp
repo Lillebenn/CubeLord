@@ -95,6 +95,8 @@ void AAlbert_Character::Tick(float DeltaTime)
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
 
+	CheckCurrentRotation();
+
 	CollisionUnderPlayerCheck();
 
 	//	RayTracing to check what is beneath the player
@@ -266,31 +268,34 @@ void AAlbert_Character::HammerSwing()
 
 void AAlbert_Character::MagneticPull()
 {
-	if(!isPulling)
+	if (bIsNotDiagonal)
 	{
-	isPulling = true;
-	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0,0,-50);
-	FVector End = Start + GetMesh()->GetForwardVector() * 2000;
+		if(!isPulling)
+		{
+		isPulling = true;
+		FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0,0,-50);
+		FVector End = Start + GetMesh()->GetForwardVector() * 2000;
 	
-	FHitResult Hit;
-	FCollisionQueryParams TraceParams;
+		FHitResult Hit;
+		FCollisionQueryParams TraceParams;
 
-	// Line trace to look for magnetic cubes.
-	bool bHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, COLLISION_MAGNETICCUBE, TraceParams);
+		// Line trace to look for magnetic cubes.
+		bool bHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, COLLISION_MAGNETICCUBE, TraceParams);
 
-	// Reference to an actor we hit
-	AActor* HitActor = Hit.GetActor();
+		// Reference to an actor we hit
+		AActor* HitActor = Hit.GetActor();
 	
-	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
-		if (bHit)
-		{		
-				DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
-				FVector MagnetLoc = GetMesh()->GetComponentLocation();
-				Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+		// Visualising the line
+		DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
+			if (bHit)
+			{		
+					DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
+					FVector MagnetLoc = GetMesh()->GetComponentLocation();
+					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+			}
 		}
+		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
 	}
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
 }
 
 // Old Attack
@@ -428,6 +433,21 @@ void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay)
 void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName) 
 {
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName));
+}
+
+void AAlbert_Character::CheckCurrentRotation()
+{
+	FVector TempVec = GetCapsuleComponent()->GetComponentRotation().Vector();
+
+	if (TempVec.X == 1 || TempVec.X == -1 || TempVec.Y == 1 || TempVec.Y == -1)
+	{
+		bIsNotDiagonal = true;
+		// TODO Add visual indication that magnetism can be used.
+	}	
+	else
+	{
+		bIsNotDiagonal = false;
+	}
 }
 
 void AAlbert_Character::TESTING() 
