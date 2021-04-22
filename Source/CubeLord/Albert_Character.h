@@ -115,6 +115,9 @@ private:
 	/**Checks the players current rotation, and if it's 0, 90, 180 or 270 it sets bIsNotDirectional to true*/
 	void CheckCurrentRotation();
 
+	/**Linetrace to look for a magnetic cube in range. If it hits one, it makes the hammer glow*/
+	void ScanForMagneticCube();
+
 	/**Pointer to the enemy character "Haunted Armor"*/
 	void TESTING();
 	class AArmorPawn* Armor;

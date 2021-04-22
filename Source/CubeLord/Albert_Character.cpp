@@ -95,6 +95,7 @@ void AAlbert_Character::Tick(float DeltaTime)
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
 
+	ScanForMagneticCube();
 	CheckCurrentRotation();
 
 	CollisionUnderPlayerCheck();
@@ -442,11 +443,27 @@ void AAlbert_Character::CheckCurrentRotation()
 	if (TempVec.X == 1 || TempVec.X == -1 || TempVec.Y == 1 || TempVec.Y == -1)
 	{
 		bIsNotDiagonal = true;
-		// TODO Add visual indication that magnetism can be used.
 	}	
 	else
 	{
 		bIsNotDiagonal = false;
+	}
+}
+
+void AAlbert_Character::ScanForMagneticCube()
+{
+	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -50);
+	FVector End = Start + GetMesh()->GetForwardVector() * 2000;
+
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	bool bHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, COLLISION_MAGNETICCUBE, TraceParams);
+
+	if (bHit)
+	{
+		// TODO add Dynamic Material instance on hammer that changes it to show a cube is in range
+		// UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
 	}
 }
 
