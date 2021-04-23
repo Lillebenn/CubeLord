@@ -232,7 +232,6 @@ void ACubePawn::MoveCube()
 
 		MovementComponent->AddInputVector(tempVec, true);
 		MoveCubeDoOnce();
-		
 	}
 	else
 	{
@@ -337,6 +336,6 @@ void ACubePawn::Tick(float DeltaTime)
 void ACubePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	
 }
 

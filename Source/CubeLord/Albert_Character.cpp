@@ -362,8 +362,16 @@ void AAlbert_Character::CollisionUnderPlayerCheck()
 				CurrentLevelTile = Cast<ALevelTile>(HitActor); // set new active tile
 				Cast<ALevelTile>(CurrentLevelTile)->SetBlockResponse(); // Set new tile to block Cubes
 			}
-		}		
-	}
+		}	
+		else
+		{
+			if (CurrentLevelTile != nullptr)
+			{
+				Cast<ALevelTile>(CurrentLevelTile)->ResetCollisionResponse(); // Reset old tile collision
+				CurrentLevelTile = nullptr;
+			}
+		}	
+	}	
 }
 
 //	Raycasting to beneath Alberts Capsule Component

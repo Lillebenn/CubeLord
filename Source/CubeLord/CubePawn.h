@@ -111,6 +111,7 @@ protected:
 	void ResetCheckCubeVelocity();
 
 	/**Component that allows our cubes to move*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UFloatingPawnMovement* MovementComponent;
 
 public:	
