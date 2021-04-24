@@ -91,17 +91,22 @@ void ACubePawn::AddDownWardForce()
 	if (bHit)
 	{
 		DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
-		if (Hit.Distance > 50) // 56 is the max threshold for this to work atm, above and the block will just keep going. If we change the size of the tiles this need to be redone.
+		if (!bIsFalling)
 		{
-			bIsLaunched = false;
-			MovementComponent->StopMovementImmediately();
-			FVector TargetLoc = Cast<ALevelTile>(HitActor)->GetActorLocation();
-			FVector CurrentLoc = GetActorLocation();
-			FVector NewLoc(TargetLoc.X, TargetLoc.Y, CurrentLoc.Z); 
-			SetActorLocation(NewLoc, false); // Probably a better way to do this.
-			SetLaunchDirectionDown();
-			bIsLaunched = true;
+			if (Hit.Distance > 50)
+			{
+				bIsFalling = true;
+				bIsLaunched = false;
+				MovementComponent->StopMovementImmediately();
+				FVector TargetLoc = Cast<ALevelTile>(HitActor)->GetActorLocation();
+				FVector CurrentLoc = GetActorLocation();
+				FVector NewLoc(TargetLoc.X, TargetLoc.Y, CurrentLoc.Z); 
+				SetActorLocation(NewLoc, false); // Probably a better way to do this.
+				SetLaunchDirectionDown();
+				bIsLaunched = true;
+			}
 		}
+		
 	}
 }
 
@@ -256,6 +261,7 @@ void ACubePawn::CheckForBoundaryHit()
 		{
 			AlbertCharacter->SetOverlapTrue(); // TODO replace with animationLoop
 			bIsLaunched = false;
+			bIsFalling = false;
 			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));	
 			AlignmentCheck();
 		}	
