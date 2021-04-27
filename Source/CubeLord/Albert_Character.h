@@ -93,8 +93,10 @@ private:
 	void PauseGame();
 
 	/**Old version of pushing the cube*/
+	UFUNCTION(BlueprintCallable)
 	void StartAttacking();
 	/**OLD stops pushing the cube*/
+	UFUNCTION(BlueprintCallable)
 	void StopAttacking();
 
 	/**Sets bIsPulling to false*/
