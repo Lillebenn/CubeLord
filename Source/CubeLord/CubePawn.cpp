@@ -324,7 +324,7 @@ void ACubePawn::BeginPlay()
 		DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = marble, 1 = Nickel
 		DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
 		DynamicMaterial->SetScalarParameterValue(TEXT("MetallicBlend"), 0.8); // Metallic
-		DynamicMaterial->SetScalarParameterValue(TEXT("Marble"), 0); // sets it below 0.5 so that it uses the metallic normal map
+		// DynamicMaterial->SetScalarParameterValue(TEXT("Marble"), 0); // sets it below 0.5 so that it uses the metallic normal map
 
 		GridCollision->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
 	}

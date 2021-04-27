@@ -485,10 +485,9 @@ void AAlbert_Character::ScanForMagneticCube()
 		// TODO add Dynamic Material instance on hammer that changes it to show a cube is in range
 		if (bIsNotDiagonal)
 		{
-			DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = marble, 1 = Nickel
+			DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = default, 1 = magnetic
 			DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
 			DynamicMaterial->SetScalarParameterValue(TEXT("MetallicBlend"), 0.8); // Metallic
-			DynamicMaterial->SetScalarParameterValue(TEXT("Marble"), 0); // 
 		}
 		 UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
 	}
