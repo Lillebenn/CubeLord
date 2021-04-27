@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "LevelTile.h"
 #include "Albert_Character.generated.h"
 
 class USceneComponent;
@@ -45,51 +46,86 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* CubeVolume;
 
-
+	/**Reference to the gamemode*/
 	class ACubeLordGameMode* GameModeRef;
 
+	/***/
 	UPROPERTY(EditAnywhere)
 	AActor* CameraPositionActor{ nullptr };
 
+	/**The Cameras current Yaw position*/
 	float CurrentYaw{ 0.0f };
+
+	/**The Cameras target Yaw position*/
 	float TargetYaw{ 0.0f };
+
+	/**The Cameras Location*/
 	FVector CamLocation;
+
+	/**The Cameras parent rotation*/
 	FRotator CameraParentRotation;
+
+	/**True if the character is attacking, false otherwise*/
 	bool isAttacking{ false };
+
+	/**True if the character is pulling a magnetic cube, false otherwise*/
 	bool isPulling{ false };
+
+	/**True if the player can use overlap events to push the cube, false otherwise*/
 	bool bCanOverlap{ true };
 
+	/**True if the Character is walking on a surface that can produce sound / effect, false otherwise*/
 	bool bActorHit{ false };
 
+	/**True if the character is not looking diagonally, false otherwise*/
+	bool bIsNotDiagonal{ true };
+
+	/**Rotates the camera*/
 	void RotateCamera();
+
+	/**Moves the Camera*/
 	void MoveCamera();
 
+	/**Resets the current level*/
 	void ResetLevel();
+
+	/**Pauses the game*/
 	void PauseGame();
 
-	// OLD
+	/**Old version of pushing the cube*/
 	void StartAttacking();
+	/**OLD stops pushing the cube*/
 	void StopAttacking();
 
+	/**Sets bIsPulling to false*/
 	void StopPulling();
 
-	// Function that pushes a block away from the player.
+	/**Pushes a Cube that is infront of the character away*/
 	void HammerSwing();
 
-	// Function that pulls a magnetic cube thowards the player.
+	/**Pulls a magnetic cube infront of the character thowards the character*/
 	void MagneticPull();
 
 	//	Raytracer to be used anywhere on Albert. Needs a Socket on the skeletal mesh you want to raytrace from
 	FHitResult RayTracer(float Range, FName SocketName);	
 	void RayTraceFromSocket(float Range, FName SocketName);
+
+	/**Plays an effect at a location I.E Dust clound on footsteps*/
 	void PlayEffect(UParticleSystem* ParticleToPlay);
+
+	/**Plays a sound at a location*/
 	void PlaySound(USoundBase* SoundToPlay, FName SocketName);
 
+	/**Checks the players current rotation, and if it's 0, 90, 180 or 270 it sets bIsNotDirectional to true*/
+	void CheckCurrentRotation();
+
+	/**Pointer to the enemy character "Haunted Armor"*/
 	void TESTING();
 	class AArmorPawn* Armor;
 	UPROPERTY(EditAnywhere)
 	AActor* ArmorActor;
 	
+	/**True if the character is dead, false otherwise*/
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bDeath{ false };
 
@@ -97,10 +133,14 @@ public:
 	// Sets default values for this character's properties
 	AAlbert_Character();
 
+	/**Bool for if the player should use the alternative controls (Old, collision overlap) to push the cubes.*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bAltControls{ false };
 
+	/**The current cube being overlapped by the characters CubeVolume*/
 	class ACubePawn* CurrentOverlappingCubePawn;
+
+	/**Where the cube is right now*/
 	FVector CurrentCubeLocation;
 
 	// Called every frame
@@ -118,11 +158,19 @@ public:
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	/**Checks for a Leveltile under the player, sets that one tile to block magnetic cubes so the player can't be pushed by pulling a cube to thowards the player*/
+	void CollisionUnderPlayerCheck();
+
+	/**Helper function for pushing cubes*/
 	void SetOverlapTrue();
 
+	/**Called if they player dies by running into an enemy*/
 	void Death();
 	
 protected:
+
+	/**Pointer to the current tile the player is standing on*/
+	ALevelTile* CurrentLevelTile;
 
 	/**Handles the timer between cube launches*/
 	FTimerHandle CooldownTimerHandle;
@@ -130,7 +178,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/**Moves the character forward or backwards*/
 	void MoveForward(float Value);
+
+	/**Moves the character Left or Right*/
 	void MoveRight(float Value);
 
 	UFUNCTION(BlueprintImplementableEvent)

@@ -9,6 +9,10 @@
 #include "Components/PrimitiveComponent.h"
 #include "DrawDebugHelpers.h"
 #include "LevelTile.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Components/StaticMeshComponent.h"
+#include "Materials/MaterialInterface.h"
+
 
 #define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
 
@@ -27,9 +31,6 @@ ACubePawn::ACubePawn()
 
 	this->MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement Component"));
 	this->MovementComponent->UpdatedComponent = RootComponent;
-
-	//MagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("MagneticMaterial")); //TODO: Redo so that it does not recompile on each play, and level does not crash on build
-	//NonMagneticMaterial = CreateDefaultSubobject<UMaterial>(TEXT("NonMagneticMaterial"));
 
 	bIsLaunched = false;
 	bCheckCubeVelocity = false;
@@ -57,7 +58,7 @@ void ACubePawn::HitReceived(FVector initLoc)
 
 
 		tempVec.Z = 0;
-		if (!bIsMagnetic)
+		if (!bIsMagnetic || bMagneticHit)
 		{
 			tempVec = tempVec * -1;
 		}
@@ -67,6 +68,7 @@ void ACubePawn::HitReceived(FVector initLoc)
 		CurrentLaunchDirection = tempVec;
 		bIsLaunched = true;
 		bCubeMoved = true;
+		bMagneticHit = false;
 	}
 
 }
@@ -103,10 +105,40 @@ void ACubePawn::AddDownWardForce()
 	}
 }
 
+void ACubePawn::AlignmentCheck()
+{
+	FVector Start = GetActorLocation() + FVector(0, 0, -100);
+	FVector End = GetActorLocation() + FVector(0, 0, -200);
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	// Line trace to look for actors below the cube
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+
+	// Visualising the line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	if (bHit && HitActor->IsA(ALevelTile::StaticClass()))
+	{
+		FVector TargetLoc = Cast<ALevelTile>(HitActor)->GetActorLocation();
+		FVector CurrentLoc = GetActorLocation();
+		FVector NewLoc(TargetLoc.X, TargetLoc.Y, CurrentLoc.Z);
+		SetActorLocation(NewLoc, false);
+		UE_LOG(LogTemp, Warning, TEXT("Cube realigned!"));
+	}
+}
+
 ECollisionChannel ACubePawn::GetCollisionChannel(AActor* cube)
 {
 	ECollisionChannel temp = CubeMesh->UPrimitiveComponent::GetCollisionObjectType();
 	return temp;
+}
+
+void ACubePawn::SetMagneticHit()
+{
+	bMagneticHit = true;
 }
 
 bool ACubePawn::GetIsMagnetic()
@@ -126,10 +158,11 @@ FVector ACubePawn::FindNearestDirection(float Xin, float Yin)
 	FVector tempVec;
 
 	//UE_LOG(LogTemp, Warning, TEXT("Hitdirection: %d, %d"), Xin, Yin);
-	
-	if (FMath::FloorToInt(tempX) == 0 && FMath::FloorToInt(tempY) == 0)
+
+	if (FMath::RoundToInt(tempX) == 0 && FMath::RoundToInt(tempY) == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Bad direction: %s, X=%f Y=&f"), *tempVec.ToString(), tempX, tempY);
+		UE_LOG(LogTemp, Warning, TEXT("Bad direction: %s, X=%f Y=%f"), *tempVec.ToString(), tempX, tempY);
+		bIsLaunched = false;
 		return tempVec;
 	}
 	
@@ -222,9 +255,10 @@ void ACubePawn::CheckForBoundaryHit()
 		// UE_LOG(LogTemp, Warning, TEXT("vecSize is: %f"), vecSize);
 		if (vecSize <= 0)
 		{
-			AlbertCharacter->SetOverlapTrue();
+			AlbertCharacter->SetOverlapTrue(); // TODO replace with animationLoop
 			bIsLaunched = false;
-			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));			
+			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));	
+			AlignmentCheck();
 		}	
 	}	
 }
@@ -271,16 +305,22 @@ void ACubePawn::ResetCheckCubeVelocity()
 void ACubePawn::BeginPlay()
 {
 	Super::BeginPlay();
+	auto Cube = FindComponentByClass<UStaticMeshComponent>();
+	auto Material = Cube->GetMaterial(0);
+
+	DynamicMaterial = UMaterialInstanceDynamic::Create(Material, NULL);
+	Cube->SetMaterial(0, DynamicMaterial);
+
 	InitialLocation = GetActorTransform();
 	AlbertCharacter = Cast<AAlbert_Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (bIsMagnetic)
 	{
-		//CubeMesh->SetMaterial(0, MagneticMaterial); //TODO: Redo
-		CubeMesh->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
-	}
-	else
-	{
-		//CubeMesh->SetMaterial(0, NonMagneticMaterial); //TODO: Redo
+		DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = marble, 1 = Nickel
+		DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
+		DynamicMaterial->SetScalarParameterValue(TEXT("MetallicBlend"), 0.8); // Metallic
+		DynamicMaterial->SetScalarParameterValue(TEXT("Marble"), 0); // sets it below 0.5 so that it uses the metallic normal map
+
+		GridCollision->SetCollisionObjectType(COLLISION_MAGNETICCUBE);
 	}
 }
 

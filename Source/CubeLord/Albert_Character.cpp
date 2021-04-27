@@ -15,11 +15,10 @@
 #include "CubeLordGameMode.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundBase.h"
-#include "Sound/SoundAttenuation.h"
 #include "DrawDebugHelpers.h"
+#include "Leveltile.h"
 
 #define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
-#define COLLISION_FLOOR ECC_GameTraceChannel3
 
 // Sets default values
 AAlbert_Character::AAlbert_Character()
@@ -84,10 +83,6 @@ void AAlbert_Character::BeginPlay()
 	{
 		CubeVolume->SetGenerateOverlapEvents(true);
 	}
-
-	// SoundAtt->~FBaseAttenuationSettings();
-	// SoundAtt->FalloffMode;
-	// SoundAtt->~FBaseAttenuationSettings()
 }
 
 // Called every frame
@@ -99,6 +94,10 @@ void AAlbert_Character::Tick(float DeltaTime)
 	// RotateCamera();
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
+
+	CheckCurrentRotation();
+
+	CollisionUnderPlayerCheck();
 
 	//	RayTracing to check what is beneath the player
 	RayTraceFromSocket(4.0f, "BoneSocket");
@@ -171,7 +170,6 @@ void AAlbert_Character::RotateCamera()
 	CameraRoot->SetWorldRotation(Rotation);
 }
 
-
 void AAlbert_Character::MoveCamera() 
 {
 	// CamLocation = FVector(0.0f, 50.0f, 30.0f);
@@ -203,6 +201,7 @@ void AAlbert_Character::StartAttacking()
 		isAttacking = true;
 		if (CurrentOverlappingCubePawn != nullptr)
 		{
+			Cast<ACubePawn>(CurrentOverlappingCubePawn)->SetMagneticHit();
 			Cast<ACubePawn>(CurrentOverlappingCubePawn)->HitReceived(CurrentCubeLocation);
 		}		
 	}
@@ -269,31 +268,34 @@ void AAlbert_Character::HammerSwing()
 
 void AAlbert_Character::MagneticPull()
 {
-	if(!isPulling)
+	if (bIsNotDiagonal)
 	{
-	isPulling = true;
-	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0,0,-50);
-	FVector End = Start + GetMesh()->GetForwardVector() * 2000;
+		if(!isPulling)
+		{
+		isPulling = true;
+		FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0,0,-50);
+		FVector End = Start + GetMesh()->GetForwardVector() * 2000;
 	
-	FHitResult Hit;
-	FCollisionQueryParams TraceParams;
+		FHitResult Hit;
+		FCollisionQueryParams TraceParams;
 
-	// Line trace to look for magnetic cubes.
-	bool bHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, COLLISION_MAGNETICCUBE, TraceParams);
+		// Line trace to look for magnetic cubes.
+		bool bHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, COLLISION_MAGNETICCUBE, TraceParams);
 
-	// Reference to an actor we hit
-	AActor* HitActor = Hit.GetActor();
+		// Reference to an actor we hit
+		AActor* HitActor = Hit.GetActor();
 	
-	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
-		if (bHit)
-		{		
-				DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
-				FVector MagnetLoc = GetMesh()->GetComponentLocation();
-				Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+		// Visualising the line
+		DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
+			if (bHit)
+			{		
+					DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
+					FVector MagnetLoc = GetMesh()->GetComponentLocation();
+					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+			}
 		}
+		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
 	}
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
 }
 
 // Old Attack
@@ -318,8 +320,6 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	{
 		if (OtherActor->IsA(ACubePawn::StaticClass()))
 		{
-
-
 			CurrentCubeLocation = GetCapsuleComponent()->GetComponentLocation();
 			CurrentOverlappingCubePawn = Cast<ACubePawn>(OtherActor);
 		}		
@@ -337,7 +337,41 @@ void AAlbert_Character::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor
 	}
 }
 
-//	Raycasting to beneath Alberts BoneSocket
+void AAlbert_Character::CollisionUnderPlayerCheck()
+{
+	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -50);
+	FVector End = Start + FVector(0, 0, -1000);
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	// Line trace to look for actors below the cube
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+
+	// Reference to an actor we hit
+	AActor* HitActor = Hit.GetActor();
+
+	if(Hit.bBlockingHit)
+	{
+		// Visualising the line
+		DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 0.5f, 0, 5.0f);
+		if (HitActor->IsA(ALevelTile::StaticClass()))
+		{
+			if (CurrentLevelTile == nullptr)
+			{
+				CurrentLevelTile = Cast<ALevelTile>(HitActor);
+				Cast<ALevelTile>(CurrentLevelTile)->SetBlockResponse();
+			}
+			if (HitActor->IsA(ALevelTile::StaticClass()) && HitActor != CurrentLevelTile)
+			{
+				Cast<ALevelTile>(CurrentLevelTile)->ResetCollisionResponse(); // Reset old tile collision
+				CurrentLevelTile = Cast<ALevelTile>(HitActor); // set new active tile
+				Cast<ALevelTile>(CurrentLevelTile)->SetBlockResponse(); // Set new tile to block Cubes
+			}
+		}		
+	}
+}
+
+//	Raycasting to beneath Alberts Capsule Component
 FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName) 
 {
 	FHitResult Hit;
@@ -347,7 +381,7 @@ FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName)
 		Hit,
 		GetMesh()->GetSocketLocation(SocketName),
 		GetMesh()->GetSocketLocation(SocketName) - FVector(0.0f, 0.0f, Range),
-		FCollisionObjectQueryParams(ECollisionChannel::COLLISION_FLOOR),
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_WorldStatic),
 		TraceParams
 	);
 	
@@ -366,13 +400,17 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 		{
 			if (ActorHit->ActorHasTag(TEXT("Block")))
 			{
+				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
 				PlayEffect(Particle2);
 				PlaySound(Sound1, SocketName);
+				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound1, GetMesh()->GetSocketLocation(SocketName));
 			}
 			else
 			{
+				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
 				PlayEffect(Particle1);
 				PlaySound(Sound2, SocketName);
+				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound2, GetMesh()->GetSocketLocation(SocketName));
 			}
 		}
 		bActorHit = true;
@@ -394,7 +432,22 @@ void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay)
 
 void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName) 
 {
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName), 1.0f, 1.0f, 0.0f, SoundAtt);
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName));
+}
+
+void AAlbert_Character::CheckCurrentRotation()
+{
+	FVector TempVec = GetCapsuleComponent()->GetComponentRotation().Vector();
+
+	if (TempVec.X == 1 || TempVec.X == -1 || TempVec.Y == 1 || TempVec.Y == -1)
+	{
+		bIsNotDiagonal = true;
+		// TODO Add visual indication that magnetism can be used.
+	}	
+	else
+	{
+		bIsNotDiagonal = false;
+	}
 }
 
 void AAlbert_Character::TESTING() 

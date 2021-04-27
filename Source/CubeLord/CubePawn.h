@@ -11,6 +11,8 @@
 #include "Components/PrimitiveComponent.h"
 #include "CubePawn.generated.h"
 
+class UMaterialInstanceDynamic;
+
 UCLASS()
 class CUBELORD_API ACubePawn : public APawn
 {
@@ -30,28 +32,20 @@ public:
 	UPROPERTY(Category = Cube, EditAnywhere)
 	bool bIsMagnetic{ false };
 
-	/**Material that the cube uses if it is magnetic*/
-	UPROPERTY(EditAnywhere)
-	class UMaterial* MagneticMaterial;
-
-	/**Material that the cube uses if it is NOT magnetic*/
-	UPROPERTY(EditAnywhere)
-	class UMaterial* NonMagneticMaterial;
-
 	/**True if the cube is moving, false otherwise*/
 	bool bIsLaunched{ false };
 
 	/**Helper variable to determine when a function can and cant run*/
 	bool bCheckCubeVelocity{ false };
 
-	/**True if the Cube has enough speed to kill an enemy on impact, false otherwise*/
-	bool bCubeAboveThresholdSpeed{ false };
-
 	/**Helper variable to determine when a function can and cant run*/
 	bool bCubeMoved{ false };
 
 	/**True if the cube is falling downwards, false otherwise*/
 	bool bIsFalling{ false };
+
+	/**True if the magnetic cube should be pushed, false otherwise*/
+	bool bMagneticHit{ false };
 
 	/**What direction the cube is being launced*/
 	FVector CurrentLaunchDirection;
@@ -68,9 +62,16 @@ public:
 	/**Pulls the cube down when it's above a hole*/
 	void AddDownWardForce();
 
+	/**Uses a Linetrace to make sure the cube is properly aligned with the leveltile grid*/
+	void AlignmentCheck();
+
 	/**Returns the cubes collision channel*/
 	ECollisionChannel GetCollisionChannel(AActor* cube);
 
+	/**Used to set bMagneticHit to true*/
+	void SetMagneticHit();
+
+	/**Returns bIsMagnetic*/
 	bool GetIsMagnetic();
 
 private:
@@ -86,6 +87,9 @@ private:
 
 	/**Initial spawn of the cube, so it can be reset*/
 	FTransform InitialLocation;
+
+	/**Dynamic Material Instance used to change the appearance of the magnetic cubes*/
+	UMaterialInstanceDynamic* DynamicMaterial;
 
 protected:
 	// Called when the game starts or when spawned
