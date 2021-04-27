@@ -96,8 +96,8 @@ void AAlbert_Character::Tick(float DeltaTime)
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
 
-	ScanForMagneticCube();
 	CheckCurrentRotation();
+	ScanForMagneticCube();
 
 	CollisionUnderPlayerCheck();
 
@@ -296,7 +296,8 @@ void AAlbert_Character::MagneticPull()
 					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
 			}
 		}
-		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
+		// GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
+		StopPulling();
 	}
 }
 
@@ -406,7 +407,7 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 	AActor* ActorHit = HitResult.GetActor();
 	if (ActorHit)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorHit->GetName());
+		// UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorHit->GetName());
 		if (!bActorHit)
 		{
 			if (ActorHit->ActorHasTag(TEXT("Block")))
@@ -449,10 +450,12 @@ void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName)
 void AAlbert_Character::CheckCurrentRotation()
 {
 	FVector TempVec = GetCapsuleComponent()->GetComponentRotation().Vector();
+	UE_LOG(LogTemp, Warning, TEXT("Current Rotation: %s"), *TempVec.ToString());
 
-	if (TempVec.X == 1 || TempVec.X == -1 || TempVec.Y == 1 || TempVec.Y == -1)
+	if (TempVec.X >= 0.98 || TempVec.X <= -0.98 || TempVec.Y >= 0.98 || TempVec.Y <= -0.98)
 	{
 		bIsNotDiagonal = true;
+		UE_LOG(LogTemp, Warning, TEXT("True"));
 	}	
 	else
 	{
@@ -473,7 +476,7 @@ void AAlbert_Character::ScanForMagneticCube()
 	if (bHit)
 	{
 		// TODO add Dynamic Material instance on hammer that changes it to show a cube is in range
-		// UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
+		 UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
 	}
 }
 
