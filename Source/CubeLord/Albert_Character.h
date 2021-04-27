@@ -73,6 +73,9 @@ private:
 	/**True if the Character is walking on a surface that can produce sound / effect, false otherwise*/
 	bool bActorHit{ false };
 
+	/**True if the character is not looking diagonally, false otherwise*/
+	bool bIsNotDiagonal{ true };
+
 	/**Rotates the camera*/
 	void RotateCamera();
 
@@ -108,6 +111,12 @@ private:
 
 	/**Plays a sound at a location*/
 	void PlaySound(USoundBase* SoundToPlay, FName SocketName);
+
+	/**Checks the players current rotation, and if it's 0, 90, 180 or 270 it sets bIsNotDirectional to true*/
+	void CheckCurrentRotation();
+
+	/**Linetrace to look for a magnetic cube in range. If it hits one, it makes the hammer glow*/
+	void ScanForMagneticCube();
 
 	/**Pointer to the enemy character "Haunted Armor"*/
 	void TESTING();
