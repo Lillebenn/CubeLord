@@ -26,6 +26,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Plate;
 
+	// Sounds
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	class USoundAttenuation* SoundAttenuation;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USoundBase* SB_StepOn;
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USoundBase* SB_StepOff;
+
 	AActor* PlayerActor{ nullptr };
 
 	UPROPERTY(EditAnywhere)
@@ -46,6 +54,8 @@ private:
 	
 	UFUNCTION()
 	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	void PlaySound(USoundBase* Sound);
 
 protected:
 	// Called when the game starts or when spawned

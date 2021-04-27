@@ -19,6 +19,7 @@
 #include "Leveltile.h"
 
 #define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
+#define COLLISION_FLOOR ECC_GameTraceChannel3
 
 // Sets default values
 AAlbert_Character::AAlbert_Character()
@@ -390,7 +391,7 @@ FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName)
 		Hit,
 		GetMesh()->GetSocketLocation(SocketName),
 		GetMesh()->GetSocketLocation(SocketName) - FVector(0.0f, 0.0f, Range),
-		FCollisionObjectQueryParams(ECollisionChannel::ECC_WorldStatic),
+		FCollisionObjectQueryParams(ECollisionChannel::COLLISION_FLOOR),
 		TraceParams
 	);
 	
@@ -405,6 +406,7 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 	AActor* ActorHit = HitResult.GetActor();
 	if (ActorHit)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorHit->GetName());
 		if (!bActorHit)
 		{
 			if (ActorHit->ActorHasTag(TEXT("Block")))
@@ -412,25 +414,25 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
 				PlayEffect(Particle2);
 				PlaySound(Sound1, SocketName);
-				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound1, GetMesh()->GetSocketLocation(SocketName));
 			}
 			else
 			{
 				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
 				PlayEffect(Particle1);
 				PlaySound(Sound2, SocketName);
-				// UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound2, GetMesh()->GetSocketLocation(SocketName));
 			}
 		}
 		bActorHit = true;
+		return;
 	}
 	else
 	{
 		if (bActorHit)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
+			// UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
 		}
 		bActorHit = false;
+		return;
 	}
 }
 
@@ -441,7 +443,7 @@ void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay)
 
 void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName) 
 {
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName));
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName), 1.0f, 1.0f, 0.0, SoundAtt);
 }
 
 void AAlbert_Character::CheckCurrentRotation()
@@ -477,8 +479,6 @@ void AAlbert_Character::ScanForMagneticCube()
 
 void AAlbert_Character::TESTING() 
 {
-	// GameModeRef->StartGame();
 	GameModeRef->TitleScreen(true);
-	// GameModeRef->GoToTitleScreen(true);
 }
 

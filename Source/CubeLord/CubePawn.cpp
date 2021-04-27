@@ -235,6 +235,7 @@ void ACubePawn::MoveCube()
 		float DeltaSeconds = GetWorld()->GetDeltaSeconds();
 		tempVec = tempVec * DeltaSeconds;
 
+		
 		MovementComponent->AddInputVector(tempVec, true);
 		MoveCubeDoOnce();
 	}

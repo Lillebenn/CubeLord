@@ -54,6 +54,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
 	void QuitGameFunc();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	float MasterVolume{ 1.0f };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	float EffectsVolume{ 1.0f };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	float MusicVolume{ 0.5f };
 };
 
 
