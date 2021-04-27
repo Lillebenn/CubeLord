@@ -10,6 +10,7 @@
 class USceneComponent;
 class UParticleSystem;
 class USoundBase;
+class UMaterialInstanceDynamic;
 
 UCLASS()
 class CUBELORD_API AAlbert_Character : public ACharacter
@@ -35,6 +36,8 @@ private:
 	USoundBase* Sound2;
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USoundBase* DeathSound;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* HammerMesh;
 
 	 	
 	// struct FSoundAttenuationSettings* SoundAtt;
@@ -124,6 +127,9 @@ private:
 	/**Linetrace to look for a magnetic cube in range. If it hits one, it makes the hammer glow*/
 	void ScanForMagneticCube();
 
+	/**Dynamic Material Instance used to change the appearance of the Hammer if a magnetic cube is in range*/
+	UMaterialInstanceDynamic* DynamicMaterial;
+
 	/**Pointer to the enemy character "Haunted Armor"*/
 	void TESTING();
 	class AArmorPawn* Armor;
@@ -156,7 +162,7 @@ public:
 	
 	// OLD
 	UFUNCTION()
-	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	void OnHammerheadOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult);
 
