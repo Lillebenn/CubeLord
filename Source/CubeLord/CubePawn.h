@@ -91,6 +91,9 @@ private:
 	/**Dynamic Material Instance used to change the appearance of the magnetic cubes*/
 	UMaterialInstanceDynamic* DynamicMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase* SlideSound;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
