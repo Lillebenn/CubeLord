@@ -87,6 +87,10 @@ void AAlbert_Character::BeginPlay()
 	{
 		CubeVolume->SetGenerateOverlapEvents(true);
 	}
+
+	auto Material = HammerMesh->GetMaterial(1);
+	DynamicMaterial = UMaterialInstanceDynamic::Create(Material, NULL);
+	HammerMesh->SetMaterial(1, DynamicMaterial);
 }
 
 // Called every frame
@@ -484,13 +488,20 @@ void AAlbert_Character::ScanForMagneticCube()
 	if (bHit)
 	{
 		// TODO add Dynamic Material instance on hammer that changes it to show a cube is in range
-		if (/*bIsNotDiagonal*/false)
+		if (bIsNotDiagonal)
 		{
-			DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = default, 1 = magnetic
-			DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
-			DynamicMaterial->SetScalarParameterValue(TEXT("MetallicBlend"), 0.8); // Metallic
+			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 100);
+			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.75f, 0.f, 0.f));
+			//DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = default, 1 = magnetic
+			//DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
+			//DynamicMaterial->SetScalarParameterValue(TEXT("MetallicBlend"), 0.8); // Metallic
 		}
-		 UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
+		else
+		{
+			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.f, 0.f, 0.75f));			
+			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 1);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
 	}
 }
 
