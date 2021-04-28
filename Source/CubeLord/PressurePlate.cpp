@@ -71,6 +71,7 @@ void APressurePlate::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 			Door->PressurePlateEffectStart();
 			PlateZ = PlateZMin;
 			UE_LOG(LogTemp, Warning, TEXT("Start"));
+			PlayPressurePlateFX();
 		}
 	}
 }

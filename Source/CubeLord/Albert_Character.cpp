@@ -325,6 +325,7 @@ void AAlbert_Character::OnHammerheadOverlap(UPrimitiveComponent* OverlappedCompo
 				if (OtherActor->IsA(ACubePawn::StaticClass()))
 				{
 					FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation();
+					SpawnHammerHitFX(FTransform(OverlappedComponent->GetComponentRotation(), SweepResult.Location, FVector(0.f, 0.f, 0.f)));
 					Cast<ACubePawn>(OtherActor)->HitReceived(CurrentLoc);
 					bCanOverlap = false;
 				}
