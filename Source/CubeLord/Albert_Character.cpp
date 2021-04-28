@@ -15,6 +15,7 @@
 #include "CubeLordGameMode.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundBase.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "DrawDebugHelpers.h"
 #include "Leveltile.h"
 
@@ -56,6 +57,8 @@ AAlbert_Character::AAlbert_Character()
 	CubeVolume->SetupAttachment(GetCapsuleComponent());
 	CubeVolume->SetGenerateOverlapEvents(false);
 
+	HammerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HammerMesh"));
+	HammerMesh->SetupAttachment(ACharacter::GetMesh(),"Bone");
 
 	//	Don't rotate when the controller rotates. 
 	bUseControllerRotationPitch = false;
@@ -73,8 +76,8 @@ void AAlbert_Character::BeginPlay()
 {
 	Super::BeginPlay();
 	GameModeRef = Cast<ACubeLordGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	CubeVolume->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnOverlap);
-	CubeVolume->OnComponentEndOverlap.AddDynamic(this, &AAlbert_Character::OnOverlapEnd);
+	HammerMesh->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnHammerheadOverlap);
+	HammerMesh->OnComponentEndOverlap.AddDynamic(this, &AAlbert_Character::OnOverlapEnd);
 
 	//	Simple way of setting cameralocation relative to the player start
 	//		NEEDS TO BE CHANGED LATER
@@ -84,6 +87,10 @@ void AAlbert_Character::BeginPlay()
 	{
 		CubeVolume->SetGenerateOverlapEvents(true);
 	}
+
+	auto Material = HammerMesh->GetMaterial(1);
+	DynamicMaterial = UMaterialInstanceDynamic::Create(Material, NULL);
+	HammerMesh->SetMaterial(1, DynamicMaterial);
 }
 
 // Called every frame
@@ -97,6 +104,7 @@ void AAlbert_Character::Tick(float DeltaTime)
 	CameraParentRotation = CameraRoot->GetComponentRotation();
 
 	CheckCurrentRotation();
+	ScanForMagneticCube();
 
 	CollisionUnderPlayerCheck();
 
@@ -114,8 +122,8 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
 	//PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::HammerSwing);
 
-	PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
-	PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
+	//PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
+	//PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
 
 	PlayerInputComponent->BindAction("MagnetPull", IE_Pressed, this, &AAlbert_Character::MagneticPull);
 	// PlayerInputComponent->BindAction("MagnetPull", IE_Released, this, &AAlbert_Character::StopPulling);
@@ -193,7 +201,7 @@ void AAlbert_Character::StartAttacking()
 {
 	if (!bAltControls)
 	{
-		CubeVolume->SetGenerateOverlapEvents(true);
+		HammerMesh->SetGenerateOverlapEvents(true);
 		UE_LOG(LogTemp, Warning, TEXT("Albert Smash!"));
 		isAttacking = true;
 	}
@@ -213,7 +221,7 @@ void AAlbert_Character::StopAttacking()
 {
 	if (!bAltControls)
 	{
-		CubeVolume->SetGenerateOverlapEvents(false);
+		HammerMesh->SetGenerateOverlapEvents(false);
 		isAttacking = false;
 	}
 	else
@@ -292,15 +300,18 @@ void AAlbert_Character::MagneticPull()
 			{		
 					DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
 					FVector MagnetLoc = GetMesh()->GetComponentLocation();
+					Cast<ACubePawn>(HitActor)->SetMagneticHit();
 					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
 			}
 		}
-		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
+		// GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
+		StopPulling();
 	}
 }
 
+// TODO: Make it overlapcomponent of hammer head when animation is implemented.
 // Old Attack
-void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+void AAlbert_Character::OnHammerheadOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -309,11 +320,15 @@ void AAlbert_Character::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		// UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
 		if (bCanOverlap)
 		{
-			if (OtherActor->IsA(ACubePawn::StaticClass()))
+			if (OverlappedComponent == HammerMesh)
 			{
-				FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation();
-				Cast<ACubePawn>(OtherActor)->HitReceived(CurrentLoc);
-				bCanOverlap = false;
+				if (OtherActor->IsA(ACubePawn::StaticClass()))
+				{
+					FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation();
+					SpawnHammerHitFX(FTransform(OverlappedComponent->GetComponentRotation(), SweepResult.Location, FVector(0.f, 0.f, 0.f)));
+					Cast<ACubePawn>(OtherActor)->HitReceived(CurrentLoc);
+					bCanOverlap = false;
+				}
 			}
 		}
 	}
@@ -368,8 +383,16 @@ void AAlbert_Character::CollisionUnderPlayerCheck()
 				CurrentLevelTile = Cast<ALevelTile>(HitActor); // set new active tile
 				Cast<ALevelTile>(CurrentLevelTile)->SetBlockResponse(); // Set new tile to block Cubes
 			}
-		}		
-	}
+		}	
+		else
+		{
+			if (CurrentLevelTile != nullptr)
+			{
+				Cast<ALevelTile>(CurrentLevelTile)->ResetCollisionResponse(); // Reset old tile collision
+				CurrentLevelTile = nullptr; // reset pointer so that you can reactivate the same level tile after walking off it.
+			}
+		}	
+	}	
 }
 
 //	Raycasting to beneath Alberts Capsule Component
@@ -397,21 +420,21 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 	AActor* ActorHit = HitResult.GetActor();
 	if (ActorHit)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorHit->GetName());
+		// UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorHit->GetName());
 		if (!bActorHit)
 		{
-			if (ActorHit->ActorHasTag(TEXT("Block")))
-			{
-				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
-				PlayEffect(Particle2);
-				PlaySound(Sound1, SocketName);
-			}
-			else
-			{
-				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
-				PlayEffect(Particle1);
-				PlaySound(Sound2, SocketName);
-			}
+			//if (ActorHit->ActorHasTag(TEXT("Block"))) //TODO: Reactivate later
+			//{
+			//	// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
+			//	PlayEffect(Particle2);
+			//	PlaySound(Sound1, SocketName);
+			//}
+			//else
+			//{
+			//	// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
+			//	PlayEffect(Particle1);
+			//	PlaySound(Sound2, SocketName);
+			//}
 		}
 		bActorHit = true;
 		return;
@@ -440,15 +463,46 @@ void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName)
 void AAlbert_Character::CheckCurrentRotation()
 {
 	FVector TempVec = GetCapsuleComponent()->GetComponentRotation().Vector();
+	// UE_LOG(LogTemp, Warning, TEXT("Current Rotation: %s"), *TempVec.ToString());
 
-	if (TempVec.X == 1 || TempVec.X == -1 || TempVec.Y == 1 || TempVec.Y == -1)
+	if (TempVec.X >= 0.98 || TempVec.X <= -0.98 || TempVec.Y >= 0.98 || TempVec.Y <= -0.98)
 	{
 		bIsNotDiagonal = true;
-		// TODO Add visual indication that magnetism can be used.
+		// UE_LOG(LogTemp, Warning, TEXT("True"));
 	}	
 	else
 	{
 		bIsNotDiagonal = false;
+	}
+}
+
+void AAlbert_Character::ScanForMagneticCube()
+{
+	FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -50);
+	FVector End = Start + GetMesh()->GetForwardVector() * 2000;
+
+	FHitResult Hit;
+	FCollisionQueryParams TraceParams;
+
+	bool bHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, COLLISION_MAGNETICCUBE, TraceParams);
+
+	if (bHit)
+	{
+		// TODO add Dynamic Material instance on hammer that changes it to show a cube is in range
+		if (bIsNotDiagonal)
+		{
+			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 100);
+			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.75f, 0.f, 0.f));
+			//DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = default, 1 = magnetic
+			//DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
+			//DynamicMaterial->SetScalarParameterValue(TEXT("MetallicBlend"), 0.8); // Metallic
+		}
+		else
+		{
+			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.f, 0.f, 0.75f));			
+			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 1);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
 	}
 }
 

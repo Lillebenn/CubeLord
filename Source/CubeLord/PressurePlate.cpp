@@ -6,7 +6,6 @@
 #include "Components/SceneComponent.h"
 #include "Components/BoxComponent.h"
 #include "CubePawn.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APressurePlate::APressurePlate()
@@ -71,7 +70,8 @@ void APressurePlate::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			Door->PressurePlateEffectStart();
 			PlateZ = PlateZMin;
-			PlaySound(SB_StepOn);
+			UE_LOG(LogTemp, Warning, TEXT("Start"));
+			PlayPressurePlateFX();
 		}
 	}
 }
@@ -85,13 +85,7 @@ void APressurePlate::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cla
 		{
 			Door->PressurePlateEffectEnd();
 			PlateZ = PlateZMax;
-			PlaySound(SB_StepOff);
 		}
 	}
-}
-
-void APressurePlate::PlaySound(USoundBase* Sound) 
-{
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation(), 1.0f, 1.0f, 0.0f, SoundAttenuation);
 }
 
