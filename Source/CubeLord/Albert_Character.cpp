@@ -422,18 +422,18 @@ void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 		// UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorHit->GetName());
 		if (!bActorHit)
 		{
-			if (ActorHit->ActorHasTag(TEXT("Block")))
-			{
-				// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
-				PlayEffect(Particle2);
-				PlaySound(Sound1, SocketName);
-			}
-			else
-			{
-				// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
-				PlayEffect(Particle1);
-				PlaySound(Sound2, SocketName);
-			}
+			//if (ActorHit->ActorHasTag(TEXT("Block"))) //TODO: Reactivate later
+			//{
+			//	// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
+			//	PlayEffect(Particle2);
+			//	PlaySound(Sound1, SocketName);
+			//}
+			//else
+			//{
+			//	// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
+			//	PlayEffect(Particle1);
+			//	PlaySound(Sound2, SocketName);
+			//}
 		}
 		bActorHit = true;
 		return;
