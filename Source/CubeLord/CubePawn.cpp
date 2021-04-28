@@ -58,7 +58,7 @@ void ACubePawn::HitReceived(FVector initLoc)
 
 
 		tempVec.Z = 0;
-		if (!bIsMagnetic || bMagneticHit)
+		if (!bIsMagnetic || !bMagneticHit)
 		{
 			tempVec = tempVec * -1;
 		}

@@ -76,8 +76,8 @@ void AAlbert_Character::BeginPlay()
 {
 	Super::BeginPlay();
 	GameModeRef = Cast<ACubeLordGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	CubeVolume->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnHammerheadOverlap);
-	CubeVolume->OnComponentEndOverlap.AddDynamic(this, &AAlbert_Character::OnOverlapEnd);
+	HammerMesh->OnComponentBeginOverlap.AddDynamic(this, &AAlbert_Character::OnHammerheadOverlap);
+	HammerMesh->OnComponentEndOverlap.AddDynamic(this, &AAlbert_Character::OnOverlapEnd);
 
 	//	Simple way of setting cameralocation relative to the player start
 	//		NEEDS TO BE CHANGED LATER
@@ -197,7 +197,7 @@ void AAlbert_Character::StartAttacking()
 {
 	if (!bAltControls)
 	{
-		CubeVolume->SetGenerateOverlapEvents(true);
+		HammerMesh->SetGenerateOverlapEvents(true);
 		UE_LOG(LogTemp, Warning, TEXT("Albert Smash!"));
 		isAttacking = true;
 	}
@@ -217,7 +217,7 @@ void AAlbert_Character::StopAttacking()
 {
 	if (!bAltControls)
 	{
-		CubeVolume->SetGenerateOverlapEvents(false);
+		HammerMesh->SetGenerateOverlapEvents(false);
 		isAttacking = false;
 	}
 	else
@@ -296,6 +296,7 @@ void AAlbert_Character::MagneticPull()
 			{		
 					DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
 					FVector MagnetLoc = GetMesh()->GetComponentLocation();
+					Cast<ACubePawn>(HitActor)->SetMagneticHit();
 					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
 			}
 		}
@@ -483,7 +484,7 @@ void AAlbert_Character::ScanForMagneticCube()
 	if (bHit)
 	{
 		// TODO add Dynamic Material instance on hammer that changes it to show a cube is in range
-		if (bIsNotDiagonal)
+		if (/*bIsNotDiagonal*/false)
 		{
 			DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = default, 1 = magnetic
 			DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
