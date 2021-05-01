@@ -109,7 +109,7 @@ void AAlbert_Character::Tick(float DeltaTime)
 	CollisionUnderPlayerCheck();
 
 	//	RayTracing to check what is beneath the player
-	RayTraceFromSocket(4.0f, "BoneSocket");
+	// RayTraceFromSocket(10.0f, "BoneSocket");
 }
 
 // Called to bind functionality to input
@@ -413,41 +413,47 @@ FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName)
 }
 
 
-void AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName) 
+FName AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName) 
 {
 	FHitResult HitResult = RayTracer(Range, SocketName);
 
 	AActor* ActorHit = HitResult.GetActor();
 	if (ActorHit)
 	{
+		if (ActorHit->ActorHasTag(TEXT("Block"))) //TODO: Reactivate later
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
+			// PlayEffect(Particle2);
+			// PlaySound(Sound1, SocketName);
+			UE_LOG(LogTemp, Warning, TEXT("Hits Block"));
+
+			return FName("Block");
+		}
+		else
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
+			// PlayEffect(Particle1);
+			// PlaySound(Sound2, SocketName);
+			UE_LOG(LogTemp, Warning, TEXT("Hits None"));
+			return FName("None");
+		}
 		// UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorHit->GetName());
-		if (!bActorHit)
-		{
-			//if (ActorHit->ActorHasTag(TEXT("Block"))) //TODO: Reactivate later
-			//{
-			//	// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
-			//	PlayEffect(Particle2);
-			//	PlaySound(Sound1, SocketName);
-			//}
-			//else
-			//{
-			//	// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
-			//	PlayEffect(Particle1);
-			//	PlaySound(Sound2, SocketName);
-			//}
-		}
-		bActorHit = true;
-		return;
+		// if (!bActorHit)
+		// {
+		// }
+		// bActorHit = true;
+		// return;
 	}
-	else
-	{
-		if (bActorHit)
-		{
-			// UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
-		}
-		bActorHit = false;
-		return;
-	}
+	// else
+	// {
+	// 	// if (bActorHit)
+	// 	// {
+	// 	// 	// UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
+	// 	// }
+	// 	// bActorHit = false;
+	// 	// return;
+	// }
+	return FName("");
 }
 
 void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay) 

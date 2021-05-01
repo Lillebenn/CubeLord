@@ -111,10 +111,6 @@ private:
 	/**Pulls a magnetic cube infront of the character thowards the character*/
 	void MagneticPull();
 
-	//	Raytracer to be used anywhere on Albert. Needs a Socket on the skeletal mesh you want to raytrace from
-	FHitResult RayTracer(float Range, FName SocketName);	
-	void RayTraceFromSocket(float Range, FName SocketName);
-
 	/**Plays an effect at a location I.E Dust clound on footsteps*/
 	void PlayEffect(UParticleSystem* ParticleToPlay);
 
@@ -180,7 +176,11 @@ public:
 
 	/**Called if they player dies by running into an enemy*/
 	void Death();
-	
+		
+	//	Raytracer to be used anywhere on Albert. Needs a Socket on the skeletal mesh you want to raytrace from
+	FHitResult RayTracer(float Range, FName SocketName);	
+	FName RayTraceFromSocket(float Range, FName SocketName);
+
 protected:
 
 	/**Pointer to the current tile the player is standing on*/
