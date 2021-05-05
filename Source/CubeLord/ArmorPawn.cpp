@@ -59,7 +59,12 @@ void AArmorPawn::HandleDestruction()
 		UGameplayStatics::SpawnEmitterAtLocation(this, DeathParticle, ParticleSpawn->GetComponentLocation());
 	}
 	Mesh->DestroyComponent();
-	Gate->HandleDestruction();
+
+	if (Gate != nullptr)
+	{
+		Gate->HandleDestruction();
+	}
+	
 	DestroyArmor();
 }
 
