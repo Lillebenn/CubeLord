@@ -55,10 +55,10 @@ AAlbert_Character::AAlbert_Character()
 
 	CubeVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxTrace"));
 	CubeVolume->SetupAttachment(GetCapsuleComponent());
-	CubeVolume->SetGenerateOverlapEvents(false);
+	CubeVolume->SetGenerateOverlapEvents(true);
 
 	HammerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HammerMesh"));
-	HammerMesh->SetupAttachment(ACharacter::GetMesh(),"Bone");
+	HammerMesh->SetupAttachment(ACharacter::GetMesh(), "Bone");
 
 	//	Don't rotate when the controller rotates. 
 	bUseControllerRotationPitch = false;
@@ -88,9 +88,11 @@ void AAlbert_Character::BeginPlay()
 		CubeVolume->SetGenerateOverlapEvents(true);
 	}
 
+	HammerMesh->SetupAttachment(ACharacter::GetMesh(), "Bone");
 	auto Material = HammerMesh->GetMaterial(1);
 	DynamicMaterial = UMaterialInstanceDynamic::Create(Material, NULL);
 	HammerMesh->SetMaterial(1, DynamicMaterial);
+	StopAttacking();
 }
 
 // Called every frame
@@ -306,6 +308,7 @@ void AAlbert_Character::MagneticPull()
 		}
 		// GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
 		StopPulling();
+		StopAttacking();
 	}
 }
 
@@ -318,7 +321,7 @@ void AAlbert_Character::OnHammerheadOverlap(UPrimitiveComponent* OverlappedCompo
 	if (!bAltControls)
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
-		if (bCanOverlap)
+		if (bCanOverlap && OtherActor == CurrentOverlappingCubePawn)
 		{
 			if (OverlappedComponent == HammerMesh)
 			{

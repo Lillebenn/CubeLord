@@ -36,7 +36,7 @@ private:
 	USoundBase* Sound2;
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USoundBase* DeathSound;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* HammerMesh;
 
 	 	
@@ -145,6 +145,7 @@ public:
 	bool bAltControls{ false };
 
 	/**The current cube being overlapped by the characters CubeVolume*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class ACubePawn* CurrentOverlappingCubePawn;
 
 	/**Where the cube is right now*/
