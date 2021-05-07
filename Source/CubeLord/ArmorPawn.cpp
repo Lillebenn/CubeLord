@@ -76,7 +76,7 @@ void AArmorPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	{
 		HandleDestruction();
 	}
-	if (OtherActor->IsA(AAlbert_Character::StaticClass()))
+	if (OtherActor->IsA(AAlbert_Character::StaticClass()) && OtherComponent->IsA(UCapsuleComponent::StaticClass()))
 	{
 		Albert = Cast<AAlbert_Character>(OtherActor);
 		Albert->Death();
