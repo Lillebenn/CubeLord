@@ -428,7 +428,7 @@ FName AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 			// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
 			// PlayEffect(Particle2);
 			// PlaySound(Sound1, SocketName);
-			UE_LOG(LogTemp, Warning, TEXT("Hits Block"));
+			// UE_LOG(LogTemp, Warning, TEXT("Hits Block"));
 
 			return FName("Block");
 		}
@@ -437,7 +437,7 @@ FName AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 			// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
 			// PlayEffect(Particle1);
 			// PlaySound(Sound2, SocketName);
-			UE_LOG(LogTemp, Warning, TEXT("Hits None"));
+			//UE_LOG(LogTemp, Warning, TEXT("Hits None"));
 			return FName("None");
 		}
 		// UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorHit->GetName());
@@ -497,7 +497,7 @@ void AAlbert_Character::ScanForMagneticCube()
 
 	if (bHit)
 	{
-		// TODO add Dynamic Material instance on hammer that changes it to show a cube is in range
+		
 		if (bIsNotDiagonal)
 		{
 			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 100);
@@ -511,7 +511,7 @@ void AAlbert_Character::ScanForMagneticCube()
 			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.f, 0.f, 0.75f));			
 			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 1);
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
+		// UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
 	}
 }
 

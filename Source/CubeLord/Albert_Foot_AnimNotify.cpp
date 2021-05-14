@@ -16,7 +16,7 @@ void UAlbert_Foot_AnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
         if (Albert != NULL)
         {
             FName HitResult = Albert->RayTraceFromSocket(10.0f, SocketName);
-            UE_LOG(LogTemp, Warning, TEXT("%s"), *HitResult.ToString());
+            // UE_LOG(LogTemp, Warning, TEXT("%s"), *HitResult.ToString());
             if (HitResult == "Block")
             {
                 PlaySoundnEffects(MeshComp, FootStep_Stone, Particle_Stone);
