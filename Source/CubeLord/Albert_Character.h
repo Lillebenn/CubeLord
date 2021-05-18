@@ -82,6 +82,7 @@ private:
 	bool bActorHit{ false };
 
 	/**True if the character is not looking diagonally, false otherwise*/
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bIsNotDiagonal{ true };
 
 	/**Rotates the camera*/
