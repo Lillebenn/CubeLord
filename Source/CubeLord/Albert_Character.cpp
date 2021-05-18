@@ -170,8 +170,11 @@ void AAlbert_Character::SetOverlapTrue()
 
 void AAlbert_Character::Death()
 {
-	bDeath = true;
-	CallDeath();
+	if (!bDeath)
+	{
+		bDeath = true;
+		CallDeath();
+	}
 }
 
 void AAlbert_Character::RotateCamera()
