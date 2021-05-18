@@ -235,7 +235,7 @@ void AAlbert_Character::StopAttacking()
 // Stop Pulling
 void AAlbert_Character::StopPulling()
 {
-	isPulling = false;
+	bIsPulling = false;
 }
 
 void AAlbert_Character::HammerSwing()
@@ -281,9 +281,9 @@ void AAlbert_Character::MagneticPull()
 {
 	if (bIsNotDiagonal)
 	{
-		if(!isPulling)
+		if(!bIsPulling)
 		{
-		isPulling = true;
+		bIsPulling = true;
 		FVector Start = GetCapsuleComponent()->GetComponentLocation() + FVector(0,0,-50);
 		FVector End = Start + GetMesh()->GetForwardVector() * 2000;
 	

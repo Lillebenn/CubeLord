@@ -72,7 +72,8 @@ private:
 	bool isAttacking{ false };
 
 	/**True if the character is pulling a magnetic cube, false otherwise*/
-	bool isPulling{ false };
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bIsPulling{ false };
 
 	/**True if the player can use overlap events to push the cube, false otherwise*/
 	bool bCanOverlap{ true };
