@@ -69,6 +69,7 @@ void ACubePawn::HitReceived(FVector initLoc)
 		bIsLaunched = true;
 		bCubeMoved = true;
 		bMagneticHit = false;
+		PlaySound();
 	}
 
 }
@@ -265,6 +266,7 @@ void ACubePawn::CheckForBoundaryHit()
 			bIsFalling = false;
 			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));	
 			AlignmentCheck();
+			PlaySound();
 		}	
 	}	
 }

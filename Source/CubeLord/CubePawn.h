@@ -28,11 +28,16 @@ public:
 	// Sets default values for this pawn's properties
 	ACubePawn();
 
+	//	Will play sound when cube is launched and is stopped
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlaySound();
+
 	/**True if the cube is magnetic and can be pulled thowards the player, false otherwise*/
 	UPROPERTY(Category = Cube, EditAnywhere)
 	bool bIsMagnetic{ false };
 
 	/**True if the cube is moving, false otherwise*/
+	UPROPERTY(BlueprintReadOnly)
 	bool bIsLaunched{ false };
 
 	/**Helper variable to determine when a function can and cant run*/
