@@ -53,4 +53,7 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void DestroyArmor();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DestroyAlbert();
 };
