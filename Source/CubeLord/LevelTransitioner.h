@@ -18,12 +18,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BeginLevelTransition();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void BeginLevelTransition();
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Level to open", meta = (AllowPrivateAccess = "true"))

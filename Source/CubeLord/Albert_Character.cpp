@@ -18,6 +18,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "DrawDebugHelpers.h"
 #include "Leveltile.h"
+#include "LevelTransitioner.h"
 
 #define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
 #define COLLISION_FLOOR ECC_GameTraceChannel3
@@ -132,7 +133,7 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
 
-	PlayerInputComponent->BindAction("Testing", IE_Pressed, this, &AAlbert_Character::TESTING);
+	PlayerInputComponent->BindAction("SkipLevel", IE_Pressed, this, &AAlbert_Character::SkipLevel);
 }
 
 void AAlbert_Character::MoveForward(float Value) 
@@ -431,7 +432,7 @@ FHitResult AAlbert_Character::RayTracer(float Range, FName SocketName)
 	return Hit;
 }
 
-
+//	Raytracing from socket. Is called in the anim notify in the walking animation
 FName AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName) 
 {
 	FHitResult HitResult = RayTracer(Range, SocketName);
@@ -439,50 +440,28 @@ FName AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 	AActor* ActorHit = HitResult.GetActor();
 	if (ActorHit)
 	{
-		if (ActorHit->ActorHasTag(TEXT("Block"))) //TODO: Reactivate later
+		if (ActorHit->ActorHasTag(TEXT("Block")))
 		{
-			// UE_LOG(LogTemp, Warning, TEXT("Hits Floor"));
-			// PlayEffect(Particle2);
-			// PlaySound(Sound1, SocketName);
-			// UE_LOG(LogTemp, Warning, TEXT("Hits Block"));
-
 			return FName("Block");
 		}
 		else
 		{
-			// UE_LOG(LogTemp, Warning, TEXT("Hits Dirt"));
-			// PlayEffect(Particle1);
-			// PlaySound(Sound2, SocketName);
-			//UE_LOG(LogTemp, Warning, TEXT("Hits None"));
+
 			return FName("None");
 		}
-		// UE_LOG(LogTemp, Warning, TEXT("%s"), *ActorHit->GetName());
-		// if (!bActorHit)
-		// {
-		// }
-		// bActorHit = true;
-		// return;
 	}
-	// else
-	// {
-	// 	// if (bActorHit)
-	// 	// {
-	// 	// 	// UE_LOG(LogTemp, Warning, TEXT("No Actor Hit"));
-	// 	// }
-	// 	// bActorHit = false;
-	// 	// return;
-	// }
 	return FName("");
 }
 
-void AAlbert_Character::PlayEffect(UParticleSystem* ParticleToPlay) 
+void AAlbert_Character::SkipLevel() 
 {
-	UGameplayStatics::SpawnEmitterAtLocation(this, ParticleToPlay, GetMesh()->GetSocketLocation("BoneSocket"));
-}
+	LT = UGameplayStatics::GetActorOfClass(GetWorld(), ALevelTransitioner::StaticClass());
+	if (LT)
+	{
+		LTclass = Cast<ALevelTransitioner>(LT);
+		LTclass->BeginLevelTransition();
+	}
 
-void AAlbert_Character::PlaySound(USoundBase* SoundToPlay, FName SocketName) 
-{
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetMesh()->GetSocketLocation(SocketName), 1.0f, 1.0f, 0.0, SoundAtt);
 }
 
 void AAlbert_Character::CheckCurrentRotation()
@@ -531,8 +510,4 @@ void AAlbert_Character::ScanForMagneticCube()
 	}
 }
 
-void AAlbert_Character::TESTING() 
-{
-	GameModeRef->TitleScreen(true);
-}
 
