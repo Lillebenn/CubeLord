@@ -88,10 +88,10 @@ void ACubePawn::AddDownWardForce()
 	AActor* HitActor = Hit.GetActor();
 
 	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	// DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
 	if (bHit)
 	{
-		DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+		// DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
 		if (!bIsFalling)
 		{
 			if (Hit.Distance > 50)
@@ -125,7 +125,7 @@ void ACubePawn::AlignmentCheck()
 	AActor* HitActor = Hit.GetActor();
 
 	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
+	// DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f);
 	if (bHit && HitActor->IsA(ALevelTile::StaticClass()))
 	{
 		FVector TargetLoc = Cast<ALevelTile>(HitActor)->GetActorLocation();

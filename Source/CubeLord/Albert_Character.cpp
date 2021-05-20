@@ -252,19 +252,19 @@ void AAlbert_Character::HammerSwing()
 	AActor* HitActor = Hit.GetActor();
 
 	// Visualising the line
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
+	// DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
 		if (bHit && HitActor->IsA(ACubePawn::StaticClass()))
 		{
 			if(Cast<ACubePawn>(HitActor)->GetIsMagnetic() == true)
 			{
-				DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+				// DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
 				FVector CurrentLoc = GetMesh()->GetComponentLocation();
 				FVector EndLoc = CurrentLoc + GetMesh()->GetForwardVector() * 200;
 				Cast<ACubePawn>(HitActor)->HitReceived(EndLoc);
 			}
 			else
 			{
-				DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
+				// DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);
 				FVector CurrentLoc = GetMesh()->GetComponentLocation();
 				Cast<ACubePawn>(HitActor)->HitReceived(CurrentLoc);
 			}
@@ -293,10 +293,10 @@ void AAlbert_Character::MagneticPull()
 		AActor* HitActor = Hit.GetActor();
 	
 		// Visualising the line
-		DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
+		// DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, 0, 5.0f);
 			if (bHit)
 			{		
-					DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
+					// DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
 					FVector MagnetLoc = GetMesh()->GetComponentLocation();
 					Cast<ACubePawn>(HitActor)->SetMagneticHit();
 					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
@@ -308,8 +308,6 @@ void AAlbert_Character::MagneticPull()
 	}
 }
 
-// TODO: Make it overlapcomponent of hammer head when animation is implemented.
-// Old Attack
 void AAlbert_Character::OnHammerheadOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
@@ -373,7 +371,7 @@ void AAlbert_Character::CollisionUnderPlayerCheck()
 	if(Hit.bBlockingHit)
 	{
 		// Visualising the line
-		DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 0.5f, 0, 5.0f);
+		// DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 0.5f, 0, 5.0f);
 		if (HitActor->IsA(ALevelTile::StaticClass()))
 		{
 			if (CurrentLevelTile == nullptr)
