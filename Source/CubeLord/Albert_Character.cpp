@@ -358,9 +358,14 @@ void AAlbert_Character::CollisionUnderPlayerCheck()
 	FVector End = Start + FVector(0, 0, -1000);
 	FHitResult Hit;
 	FCollisionQueryParams TraceParams;
+	FCollisionObjectQueryParams TraceObjectParams;
+	TraceObjectParams.ObjectTypesToQuery = 0;
+	TraceObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel3);
+	
 
 	// Line trace to look for actors below the cube
-	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+	//bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+	bool bHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, TraceObjectParams, TraceParams);
 
 	// Reference to an actor we hit
 	AActor* HitActor = Hit.GetActor();
@@ -390,8 +395,16 @@ void AAlbert_Character::CollisionUnderPlayerCheck()
 				Cast<ALevelTile>(CurrentLevelTile)->ResetCollisionResponse(); // Reset old tile collision
 				CurrentLevelTile = nullptr; // reset pointer so that you can reactivate the same level tile after walking off it.
 			}
-		}	
-	}	
+		}
+	}
+	else
+	{
+		if (CurrentLevelTile != nullptr)
+		{
+			Cast<ALevelTile>(CurrentLevelTile)->ResetCollisionResponse(); // Reset old tile collision
+			CurrentLevelTile = nullptr; // reset pointer so that you can reactivate the same level tile after walking off it.
+		}
+	}
 }
 
 //	Raycasting to beneath Alberts Capsule Component
