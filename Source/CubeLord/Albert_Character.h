@@ -129,7 +129,6 @@ private:
 	UMaterialInstanceDynamic* DynamicMaterial;
 
 	/**Pointer to the enemy character "Haunted Armor"*/
-	void TESTING();
 	class AArmorPawn* Armor;
 	UPROPERTY(EditAnywhere)
 	AActor* ArmorActor;
@@ -137,6 +136,12 @@ private:
 	/**True if the character is dead, false otherwise*/
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bDeath{ false };
+
+	
+	//	Letting the player skip the current level
+	void SkipLevel();
+	AActor* LT;
+	class ALevelTransitioner* LTclass;
 
 public:
 	// Sets default values for this character's properties
