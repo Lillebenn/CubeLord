@@ -15,11 +15,11 @@ public:
 	// Sets default values for this actor's properties
 	ALevelTransitioner();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void BeginLevelTransition();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void EndGame();
 
 protected:
 	// Called when the game starts or when spawned
@@ -36,4 +36,6 @@ private:
 		class UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	AActor* Player;
+
+	
 };

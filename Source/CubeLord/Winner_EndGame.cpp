@@ -20,6 +20,8 @@ void AWinner_EndGame::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Box->OnComponentBeginOverlap.AddDynamic(this, &AWinner_EndGame::OnOverlapBegin);
+
 	Player = GetWorld()->GetFirstPlayerController()->GetPawn();
 	
 }
@@ -32,11 +34,3 @@ void AWinner_EndGame::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 		EndGame();
 	}
 }
-
-// Called every frame
-void AWinner_EndGame::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

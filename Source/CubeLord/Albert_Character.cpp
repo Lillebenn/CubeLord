@@ -453,7 +453,19 @@ void AAlbert_Character::SkipLevel()
 	if (LT)
 	{
 		LTclass = Cast<ALevelTransitioner>(LT);
-		LTclass->BeginLevelTransition();
+
+		FString LastMap = "Level_Final_WE";
+		FString CurrentMap = GetWorld()->GetMapName();
+		CurrentMap.RemoveFromStart (GetWorld()->StreamingLevelsPrefix);
+
+		if (CurrentMap == LastMap)
+		{
+			LTclass->EndGame();
+		}
+		else
+		{
+			LTclass->BeginLevelTransition();
+		}
 	}
 
 }
