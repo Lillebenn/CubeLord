@@ -436,6 +436,10 @@ FName AAlbert_Character::RayTraceFromSocket(float Range, FName SocketName)
 		{
 			return FName("Block");
 		}
+		else if (ActorHit->ActorHasTag(TEXT("Carpet")))
+		{
+			return FName("Carpet");
+		}
 		else
 		{
 

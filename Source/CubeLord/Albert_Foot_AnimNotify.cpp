@@ -21,9 +21,13 @@ void UAlbert_Foot_AnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
             {
                 PlaySoundnEffects(MeshComp, FootStep_Stone, Particle_Stone);
             }
-            if (HitResult == "None")
+            else if (HitResult == "None")
             {
                 PlaySoundnEffects(MeshComp, FootStep_Wood, Particle_Wood);
+            }
+            else if (HitResult == "Carpet")
+            {
+                PlaySoundnEffects(MeshComp, FootStep_Carpet, Particle_Carpet);
             }
         }
     }

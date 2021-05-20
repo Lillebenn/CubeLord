@@ -22,11 +22,15 @@ private:
 	UParticleSystem* Particle_Stone{ nullptr };
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* Particle_Wood{ nullptr };
+	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* Particle_Carpet{ nullptr };
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound, meta = (AllowPrivateAccess))
 	USoundBase* FootStep_Stone;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound, meta = (AllowPrivateAccess))
 	USoundBase* FootStep_Wood;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound, meta = (AllowPrivateAccess))
+	USoundBase* FootStep_Carpet;
 
 	class AAlbert_Character* Albert{ nullptr };
 
