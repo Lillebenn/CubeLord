@@ -15,9 +15,6 @@ public:
 	// Sets default values for this actor's properties
 	AWinner_EndGame();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void EndGame();
 

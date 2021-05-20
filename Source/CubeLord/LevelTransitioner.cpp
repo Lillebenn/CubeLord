@@ -33,14 +33,17 @@ void ALevelTransitioner::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 {
 	if (OtherActor == Player && OtherComponent->IsA(UCapsuleComponent::StaticClass()))
 	{
-		BeginLevelTransition();
+		FString LastMap = "Level_Final_WE";
+		FString CurrentMap = GetWorld()->GetMapName();
+		CurrentMap.RemoveFromStart (GetWorld()->StreamingLevelsPrefix);
+
+		if (CurrentMap == LastMap)
+		{
+			EndGame();
+		}
+		else
+		{
+			BeginLevelTransition();
+		}
 	}
 }
-
-// Called every frame
-void ALevelTransitioner::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
