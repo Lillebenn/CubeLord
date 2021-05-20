@@ -55,5 +55,5 @@ protected:
 	void DestroyArmor();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void DestroyAlbert();
+	void DestroyAlbert(const FVector AlbertLocation);
 };
