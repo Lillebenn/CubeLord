@@ -35,11 +35,6 @@ AAlbert_Character::AAlbert_Character()
 	GetCapsuleComponent()->InitCapsuleSize(35.0f, 92.0f);
 	GetCapsuleComponent()->SetWorldLocation(FVector(0.0f, 0.0f, 92.0f));
 
-	// Sound1 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound1"));
-	// Sound1->SetupAttachment(GetCapsuleComponent());
-	// Sound2 = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound2"));
-	// Sound2->SetupAttachment(GetCapsuleComponent());
-
 	CameraRoot = CreateDefaultSubobject<USceneComponent>(TEXT("CameraRoot"));
 	CameraRoot->SetupAttachment(Root);
 
@@ -110,9 +105,6 @@ void AAlbert_Character::Tick(float DeltaTime)
 	ScanForMagneticCube();
 
 	CollisionUnderPlayerCheck();
-
-	//	RayTracing to check what is beneath the player
-	// RayTraceFromSocket(10.0f, "BoneSocket");
 }
 
 // Called to bind functionality to input
