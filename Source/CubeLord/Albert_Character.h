@@ -27,14 +27,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UParticleSystem* Particle1{ nullptr };
-	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UParticleSystem* Particle2{ nullptr };
-	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	USoundBase* Sound1;
-	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	USoundBase* Sound2;
-	UPROPERTY(EditAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USoundBase* DeathSound;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* HammerMesh;
