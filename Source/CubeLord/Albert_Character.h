@@ -87,6 +87,7 @@ private:
 	void ResetLevel();
 
 	/**Pauses the game*/
+	UFUNCTION(BlueprintCallable)
 	void PauseGame();
 
 	/**Old version of pushing the cube*/
@@ -103,6 +104,7 @@ private:
 	void HammerSwing();
 
 	/**Pulls a magnetic cube infront of the character thowards the character*/
+	UFUNCTION(BlueprintCallable)
 	void MagneticPull();
 
 	/**Plays an effect at a location I.E Dust clound on footsteps*/
