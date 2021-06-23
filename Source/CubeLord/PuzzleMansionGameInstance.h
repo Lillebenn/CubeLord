@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "OnlineSubsystem.h"
+#include "Online.h"
 #include "PuzzleMansionGameInstance.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class CUBELORD_API UPuzzleMansionGameInstance : public UGameInstance
 {
