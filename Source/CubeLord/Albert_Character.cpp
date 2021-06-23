@@ -97,7 +97,6 @@ void AAlbert_Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MoveCamera();
-	// RotateCamera();
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
 
@@ -115,13 +114,8 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAlbert_Character::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
-	//PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::HammerSwing);
-
-	//PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
-	//PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
-
 	PlayerInputComponent->BindAction("MagnetPull", IE_Pressed, this, &AAlbert_Character::MagneticPull);
-	// PlayerInputComponent->BindAction("MagnetPull", IE_Released, this, &AAlbert_Character::StopPulling);
+
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
 
