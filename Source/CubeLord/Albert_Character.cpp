@@ -302,6 +302,12 @@ void AAlbert_Character::MagneticPull()
 	}
 }
 
+void AAlbert_Character::IncreaseMoves()
+{
+	MovesUsed += 1;
+	UE_LOG(LogTemp, Warning, TEXT("Increased moves"))
+}
+
 void AAlbert_Character::OnHammerheadOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)

@@ -12,6 +12,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/StaticMeshComponent.h"
 #include "Materials/MaterialInterface.h"
+#include "Albert_Character.h"
 
 
 #define COLLISION_MAGNETICCUBE ECC_GameTraceChannel2
@@ -67,6 +68,7 @@ void ACubePawn::HitReceived(FVector initLoc)
 
 		CurrentLaunchDirection = tempVec;
 		bIsLaunched = true;
+		AlbertCharacter->IncreaseMoves();
 		bCubeMoved = true;
 		bMagneticHit = false;
 		PlaySound();

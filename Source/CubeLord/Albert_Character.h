@@ -48,6 +48,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	AActor* CameraPositionActor{ nullptr };
 
+	/**The current number of moves used in a level*/
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int MovesUsed{ 0 };
+
 	/**The Cameras current Yaw position*/
 	float CurrentYaw{ 0.0f };
 
@@ -176,6 +180,9 @@ public:
 
 	/**Called if they player dies by running into an enemy*/
 	void Death();
+
+	/**Increases MovesUsed by 1*/
+	void IncreaseMoves();
 		
 	//	Raytracer to be used anywhere on Albert. Needs a Socket on the skeletal mesh you want to raytrace from
 	FHitResult RayTracer(float Range, FName SocketName);	
