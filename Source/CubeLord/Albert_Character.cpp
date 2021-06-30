@@ -264,7 +264,7 @@ void AAlbert_Character::HammerSwing()
 			}
 		}
 	}
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopAttacking, 1.f, false);
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopAttacking, 0.51f, false);
 }
 
 void AAlbert_Character::MagneticPull()
@@ -294,6 +294,7 @@ void AAlbert_Character::MagneticPull()
 					FVector MagnetLoc = GetMesh()->GetComponentLocation();
 					Cast<ACubePawn>(HitActor)->SetMagneticHit(this);
 					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+					EventSpawnMagneticPullFX(HitActor);
 			}
 			else
 			{
@@ -518,6 +519,11 @@ void AAlbert_Character::ScanForMagneticCube()
 		}
 		// UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
 	}
+	else
+		{
+			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.f, 0.f, 0.75f));			
+			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 1);
+		}
 }
 
 

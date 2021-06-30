@@ -174,6 +174,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void EventStopHammerPullBlueprint(float Delay);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void EventSpawnMagneticPullFX(AActor* InCubeHit);
+
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
