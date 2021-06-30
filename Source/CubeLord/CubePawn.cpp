@@ -70,7 +70,6 @@ void ACubePawn::HitReceived(FVector initLoc)
 		bIsLaunched = true;
 		AlbertCharacter->IncreaseMoves();
 		bCubeMoved = true;
-		bMagneticHit = false;
 		PlaySound();
 	}
 
@@ -144,9 +143,10 @@ ECollisionChannel ACubePawn::GetCollisionChannel(AActor* cube)
 	return temp;
 }
 
-void ACubePawn::SetMagneticHit()
+void ACubePawn::SetMagneticHit(AAlbert_Character* InCharacter)
 {
 	bMagneticHit = true;
+	CurrentPlayerCharacter = InCharacter;
 }
 
 bool ACubePawn::GetIsMagnetic()
@@ -269,6 +269,13 @@ void ACubePawn::CheckForBoundaryHit()
 			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));	
 			AlignmentCheck();
 			PlaySound();
+
+			if (/*CurrentPlayerCharacter != nullptr && */bMagneticHit)
+			{
+				//CurrentPlayerCharacter->EventStopHammerPullBlueprint();
+				AlbertCharacter->EventStopHammerPullBlueprint(0.f);
+				bMagneticHit = false;
+			}
 		}	
 	}	
 }
@@ -298,6 +305,7 @@ void ACubePawn::CheckCubeVelocityDoOnce()
 	{
 		bCheckCubeVelocity = false;
 		ResetMoveCubeDoOnce();
+
 		return;
 	}
 	else

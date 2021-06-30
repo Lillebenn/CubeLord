@@ -202,7 +202,7 @@ void AAlbert_Character::StartAttacking()
 		isAttacking = true;
 		if (CurrentOverlappingCubePawn != nullptr)
 		{
-			Cast<ACubePawn>(CurrentOverlappingCubePawn)->SetMagneticHit();
+			Cast<ACubePawn>(CurrentOverlappingCubePawn)->SetMagneticHit(this);
 			Cast<ACubePawn>(CurrentOverlappingCubePawn)->HitReceived(CurrentCubeLocation);
 		}		
 	}
@@ -292,8 +292,12 @@ void AAlbert_Character::MagneticPull()
 			{		
 					// DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
 					FVector MagnetLoc = GetMesh()->GetComponentLocation();
-					Cast<ACubePawn>(HitActor)->SetMagneticHit();
+					Cast<ACubePawn>(HitActor)->SetMagneticHit(this);
 					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+			}
+			else
+			{
+				EventStopHammerPullBlueprint(0.5f);
 			}
 		}
 		// GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);

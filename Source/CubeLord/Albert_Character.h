@@ -171,6 +171,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnHammerHitFX(FTransform Transform);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void EventStopHammerPullBlueprint(float Delay);
+
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 

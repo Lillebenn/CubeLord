@@ -52,6 +52,9 @@ public:
 	/**True if the magnetic cube should be pushed, false otherwise*/
 	bool bMagneticHit{ false };
 
+	/**Magnetic hit by Albert*/
+	class AAlbert_Character* CurrentPlayerCharacter{ nullptr };
+
 	/**What direction the cube is being launced*/
 	FVector CurrentLaunchDirection;
 
@@ -74,7 +77,7 @@ public:
 	ECollisionChannel GetCollisionChannel(AActor* cube);
 
 	/**Used to set bMagneticHit to true*/
-	void SetMagneticHit();
+	void SetMagneticHit(AAlbert_Character* InCharacter);
 
 	/**Returns bIsMagnetic*/
 	bool GetIsMagnetic();
