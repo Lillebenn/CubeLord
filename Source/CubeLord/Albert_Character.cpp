@@ -508,12 +508,14 @@ void AAlbert_Character::ScanForMagneticCube()
 			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 100);
 			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.f, 0.f, 0.75f));
 			DynamicMaterial->SetScalarParameterValue(TEXT("Frequency"), 4);
+			bMagneticCubeDetected = true;
 		}
 		else
 		{
 			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.75f, 0.f, 0.f));
 			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 1);
 			DynamicMaterial->SetScalarParameterValue(TEXT("Frequency"), 0);
+			bMagneticCubeDetected = false;
 		}
 		// UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
 	}
@@ -522,6 +524,7 @@ void AAlbert_Character::ScanForMagneticCube()
 			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.75f, 0.f, 0.f));
 			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 1);
 			DynamicMaterial->SetScalarParameterValue(TEXT("Frequency"), 0);
+			bMagneticCubeDetected = false;
 		}
 }
 

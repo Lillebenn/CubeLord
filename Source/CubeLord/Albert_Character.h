@@ -149,6 +149,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bAltControls{ false };
 
+	/**Bool to check if player is aiming at a magnetic cube.*/
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	bool bMagneticCubeDetected{ false };
+
 	/**The current cube being overlapped by the characters CubeVolume*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class ACubePawn* CurrentOverlappingCubePawn;
