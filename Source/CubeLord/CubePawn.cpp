@@ -147,6 +147,11 @@ void ACubePawn::SetMagneticHit(AAlbert_Character* InCharacter)
 {
 	bMagneticHit = true;
 	CurrentPlayerCharacter = InCharacter;
+
+	if (!bIsLaunched)
+	{
+		AlbertCharacter->EventSpawnMagneticPullFX(this);
+	}
 }
 
 bool ACubePawn::GetIsMagnetic()
