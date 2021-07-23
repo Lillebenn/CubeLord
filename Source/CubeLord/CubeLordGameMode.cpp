@@ -26,10 +26,8 @@ void ACubeLordGameMode::TitleScreen(bool bTitleScreen)
 	{
 		if (World)
 		{
-			// UE_LOG(LogTemp, Warning, TEXT("Going to titlescreen!!"));
 			UGameplayStatics::OpenLevel(World, "TitleScreen", false);
-			// GoToTitleScreen(true);
-			// EnableMouseControl(true);
+
 			return;
 		}
 	}
@@ -38,14 +36,12 @@ void ACubeLordGameMode::TitleScreen(bool bTitleScreen)
 void ACubeLordGameMode::StartGame() 
 {
 	UE_LOG(LogTemp, Warning, TEXT("Start the game"));
-	// TitleScreen(false);
 	if (PC)
 	{
 		EnableMouseControl(false);
 	}
 	if (World)
 	{
-		// UGameplayStatics::OpenLevel(World, "CharacterMovement_Testing_Map");	//	Testing Purposes Only
 		UGameplayStatics::OpenLevel(World, "Level_0_WE");
 	}
 }

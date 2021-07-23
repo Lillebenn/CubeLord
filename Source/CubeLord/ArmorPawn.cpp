@@ -81,6 +81,6 @@ void AArmorPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		Albert = Cast<AAlbert_Character>(OtherActor);
 		Albert->Death();
 		UE_LOG(LogTemp, Warning, TEXT("Albert will die"));
-		DestroyAlbert();
+		DestroyAlbert(Cast<AAlbert_Character>(OtherActor)->GetMesh()->GetComponentLocation());
 	}
 }

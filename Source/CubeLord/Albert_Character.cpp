@@ -97,7 +97,6 @@ void AAlbert_Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MoveCamera();
-	// RotateCamera();
 
 	CameraParentRotation = CameraRoot->GetComponentRotation();
 
@@ -115,13 +114,8 @@ void AAlbert_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAlbert_Character::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAlbert_Character::MoveRight);
 	PlayerInputComponent->BindAction("ResetLevel", IE_Pressed, this, &AAlbert_Character::ResetLevel);
-	//PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::HammerSwing);
-
-	//PlayerInputComponent->BindAction("HammerSwing", IE_Pressed, this, &AAlbert_Character::StartAttacking);
-	//PlayerInputComponent->BindAction("HammerSwing", IE_Released, this, &AAlbert_Character::StopAttacking);
-
 	PlayerInputComponent->BindAction("MagnetPull", IE_Pressed, this, &AAlbert_Character::MagneticPull);
-	// PlayerInputComponent->BindAction("MagnetPull", IE_Released, this, &AAlbert_Character::StopPulling);
+
 	FInputActionBinding& Toggle = PlayerInputComponent->BindAction("PauseMenu", IE_Pressed, this, &AAlbert_Character::PauseGame);
 	Toggle.bExecuteWhenPaused = true;
 
@@ -208,7 +202,7 @@ void AAlbert_Character::StartAttacking()
 		isAttacking = true;
 		if (CurrentOverlappingCubePawn != nullptr)
 		{
-			Cast<ACubePawn>(CurrentOverlappingCubePawn)->SetMagneticHit();
+			Cast<ACubePawn>(CurrentOverlappingCubePawn)->SetMagneticHit(this);
 			Cast<ACubePawn>(CurrentOverlappingCubePawn)->HitReceived(CurrentCubeLocation);
 		}		
 	}
@@ -270,7 +264,7 @@ void AAlbert_Character::HammerSwing()
 			}
 		}
 	}
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopAttacking, 1.f, false);
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopAttacking, 0.51f, false);
 }
 
 void AAlbert_Character::MagneticPull()
@@ -298,14 +292,24 @@ void AAlbert_Character::MagneticPull()
 			{		
 					// DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Emerald, false, 2.0f);		
 					FVector MagnetLoc = GetMesh()->GetComponentLocation();
-					Cast<ACubePawn>(HitActor)->SetMagneticHit();
-					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);
+					Cast<ACubePawn>(HitActor)->SetMagneticHit(this);
+					Cast<ACubePawn>(HitActor)->HitReceived(MagnetLoc);					
+			}
+			else
+			{
+				EventStopHammerPullBlueprint(0.5f);
 			}
 		}
 		// GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AAlbert_Character::StopPulling, 1.f, false);
 		StopPulling();
 		StopAttacking();
 	}
+}
+
+void AAlbert_Character::IncreaseMoves()
+{
+	MovesUsed += 1;
+	UE_LOG(LogTemp, Warning, TEXT("Increased moves"))
 }
 
 void AAlbert_Character::OnHammerheadOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -502,18 +506,26 @@ void AAlbert_Character::ScanForMagneticCube()
 		if (bIsNotDiagonal)
 		{
 			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 100);
-			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.75f, 0.f, 0.f));
-			//DynamicMaterial->SetScalarParameterValue(TEXT("Blend"), 1); // Lerp blend, 0 = default, 1 = magnetic
-			//DynamicMaterial->SetScalarParameterValue(TEXT("RoughnessBlend"), 0.25); // Roughness
-			//DynamicMaterial->SetScalarParameterValue(TEXT("MetallicBlend"), 0.8); // Metallic
+			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.f, 0.f, 0.75f));
+			DynamicMaterial->SetScalarParameterValue(TEXT("Frequency"), 4);
+			bMagneticCubeDetected = true;
 		}
 		else
 		{
-			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.f, 0.f, 0.75f));			
+			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.75f, 0.f, 0.f));
 			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 1);
+			DynamicMaterial->SetScalarParameterValue(TEXT("Frequency"), 0);
+			bMagneticCubeDetected = false;
 		}
 		// UE_LOG(LogTemp, Warning, TEXT("Hit a cube!"));
 	}
+	else
+		{
+			DynamicMaterial->SetVectorParameterValue(TEXT("Color"), FVector(0.75f, 0.f, 0.f));
+			DynamicMaterial->SetScalarParameterValue(TEXT("EmissiveStrength"), 1);
+			DynamicMaterial->SetScalarParameterValue(TEXT("Frequency"), 0);
+			bMagneticCubeDetected = false;
+		}
 }
 
 

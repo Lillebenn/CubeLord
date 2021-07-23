@@ -48,6 +48,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	AActor* CameraPositionActor{ nullptr };
 
+	/**The current number of moves used in a level*/
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int MovesUsed{ 0 };
+
 	/**The Cameras current Yaw position*/
 	float CurrentYaw{ 0.0f };
 
@@ -87,6 +91,7 @@ private:
 	void ResetLevel();
 
 	/**Pauses the game*/
+	UFUNCTION(BlueprintCallable)
 	void PauseGame();
 
 	/**Old version of pushing the cube*/
@@ -103,6 +108,7 @@ private:
 	void HammerSwing();
 
 	/**Pulls a magnetic cube infront of the character thowards the character*/
+	UFUNCTION(BlueprintCallable)
 	void MagneticPull();
 
 	/**Plays an effect at a location I.E Dust clound on footsteps*/
@@ -143,6 +149,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bAltControls{ false };
 
+	/**Bool to check if player is aiming at a magnetic cube.*/
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	bool bMagneticCubeDetected{ false };
+
 	/**The current cube being overlapped by the characters CubeVolume*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class ACubePawn* CurrentOverlappingCubePawn;
@@ -165,6 +175,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnHammerHitFX(FTransform Transform);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void EventStopHammerPullBlueprint(float Delay);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void EventSpawnMagneticPullFX(AActor* InCubeHit);
+
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
@@ -176,6 +192,9 @@ public:
 
 	/**Called if they player dies by running into an enemy*/
 	void Death();
+
+	/**Increases MovesUsed by 1*/
+	void IncreaseMoves();
 		
 	//	Raytracer to be used anywhere on Albert. Needs a Socket on the skeletal mesh you want to raytrace from
 	FHitResult RayTracer(float Range, FName SocketName);	
