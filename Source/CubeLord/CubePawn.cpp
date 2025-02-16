@@ -273,7 +273,7 @@ void ACubePawn::CheckForBoundaryHit()
 			bIsFalling = false;
 			UE_LOG(LogTemp, Warning, TEXT("Cube no longer moving!"));	
 			AlignmentCheck();
-			PlaySound();
+			PlaySoundAtStop();
 
 			if (/*CurrentPlayerCharacter != nullptr && */bMagneticHit)
 			{

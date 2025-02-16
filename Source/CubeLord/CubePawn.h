@@ -31,9 +31,13 @@ public:
 	//	Will play sound when cube is launched and is stopped
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaySound();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlaySoundAtStop();
 
 	/**True if the cube is magnetic and can be pulled thowards the player, false otherwise*/
-	UPROPERTY(Category = Cube, EditAnywhere)
+	//UPROPERTY(VisibleAnywhere, Category = Cube) //, EditAnywhere
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Cube)
 	bool bIsMagnetic{ false };
 
 	/**True if the cube is moving, false otherwise*/
